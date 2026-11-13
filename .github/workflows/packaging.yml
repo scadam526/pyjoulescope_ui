@@ -31,6 +31,9 @@ jobs:
 
   build_sdist:
     name: Build sdist
+    # Forks lack the signing, Nuitka, DeepL and publish secrets, so they build
+    # with build_windows_exe.yml instead.  Every other job here needs this one.
+    if: github.repository == 'jetperch/pyjoulescope_ui'
     runs-on: ubuntu-latest
     steps:
       - name: Display info
