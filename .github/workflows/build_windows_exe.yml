@@ -1,0 +1,57 @@
+# Build an unsigned, single-file Windows executable with PyInstaller.
+#
+# This fork's replacement for packaging.yml, which needs upstream secrets
+# (code signing, Nuitka, DeepL, publishing) and skips outside
+# jetperch/pyjoulescope_ui.  Download the exe from the run's artifacts.
+
+name: Build Windows exe
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+env:
+  PYTHON_VERSION: '3.14'
+
+jobs:
+  build_windows_exe:
+    name: Build Windows one-file exe
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install python dependencies
+        run: |
+          python -VV
+          python -m pip install --upgrade pip
+          python -m pip install build wheel setuptools pytest babel polib deepl
+          python -m pip install -U --upgrade-strategy eager -r requirements.txt
+
+      # Compile the committed translations.  Upstream also regenerates them
+      # with DeepL, which needs a paid key, so new strings show in English.
+      - name: Compile translations
+        run: python ci/translations.py --compile-only
+
+      # Generates the Qt resource (.rcc) files that the build bundles.
+      - name: Create local files
+        run: python setup.py sdist
+
+      - name: Run python unit tests
+        run: pytest joulescope_ui
+
+      - name: Build with PyInstaller
+        run: python -m PyInstaller --noconfirm joulescope.spec -- --onefile
+
+      - name: Save exe artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: joulescope-windows-exe
+          path: dist/joulescope_*.exe
+          if-no-files-found: error

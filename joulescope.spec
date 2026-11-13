@@ -4,11 +4,15 @@
 # See https://pyinstaller.readthedocs.io/en/stable/index.html
 # > pip install pyinstaller
 # > pyinstaller joulescope.spec
+#
+# Single self-extracting executable (dist/joulescope_{version}.exe):
+# > pyinstaller joulescope.spec -- --onefile
 
 # Mac OS X
 # https://kivy.org/doc/stable/guide/packaging-osx.html
 # hdiutil create ./dist/joulescope.dmg -srcfolder ./dist/joulescope.app -ov
 
+import argparse
 import sys
 import glob
 import os
@@ -28,6 +32,15 @@ MACOS_CODE_SIGN = 'Developer ID Application: Jetperch LLC (WFRS3L8Y7Y)'
 PYQTGRAPH_PATH = os.path.dirname(pyqtgraph.__file__)
 PYJOULESCOPE_DRIVER_PATH = os.path.dirname(pyjoulescope_driver.__file__)
 INNO_SETUP_PATH = "ISCC.exe"
+
+# PyInstaller passes the arguments after "--" to this spec.
+_spec_parser = argparse.ArgumentParser(description='joulescope.spec options')
+_spec_parser.add_argument(
+    '--onefile', action='store_true',
+    help='Build one self-extracting executable instead of a folder.')
+SPEC_ARGS = _spec_parser.parse_args()
+if SPEC_ARGS.onefile and sys.platform.startswith('darwin'):
+    raise ValueError('--onefile is not supported on macOS, which needs an app bundle')
 
 
 def find_site_packages():
@@ -130,35 +143,56 @@ pyz = PYZ(
     cipher=block_cipher,
 )
 
-exe = EXE(
-    pyz,
-    a.scripts,
-    [],
-    exclude_binaries=True,
-    name=EXE_NAME,
-    debug=False,
-    bootloader_ignore_signals=False,
-    strip=False,
-    upx=True,
-    console=False,
-    icon='joulescope_ui/resources/icon.ico',
-    codesign_identity=MACOS_CODE_SIGN,
-    target_arch='universal2' if sys.platform.startswith('darwin') else 'x86_64'
-)
+if SPEC_ARGS.onefile:
+    # Bundle everything into the exe, which unpacks to a temp folder at launch.
+    exe = EXE(
+        pyz,
+        a.scripts,
+        a.binaries,
+        a.datas,
+        [],
+        name=f'joulescope_{VERSION_STR}',
+        debug=False,
+        bootloader_ignore_signals=False,
+        strip=False,
+        upx=True,
+        console=False,
+        icon='joulescope_ui/resources/icon.ico',
+        target_arch='x86_64',
+    )
+else:
+    exe = EXE(
+        pyz,
+        a.scripts,
+        [],
+        exclude_binaries=True,
+        name=EXE_NAME,
+        debug=False,
+        bootloader_ignore_signals=False,
+        strip=False,
+        upx=True,
+        console=False,
+        icon='joulescope_ui/resources/icon.ico',
+        codesign_identity=MACOS_CODE_SIGN,
+        target_arch='universal2' if sys.platform.startswith('darwin') else 'x86_64'
+    )
 
-coll = COLLECT(
-    exe,
-    a.binaries,
-    a.zipfiles,
-    a.datas,
-    strip=False,
-    upx=True,
-    name='joulescope',
-)
+    coll = COLLECT(
+        exe,
+        a.binaries,
+        a.zipfiles,
+        a.datas,
+        strip=False,
+        upx=True,
+        name='joulescope',
+    )
 
 os.makedirs('dist_installer', exist_ok=True)
 
-if sys.platform.startswith('darwin'):
+if SPEC_ARGS.onefile:
+    pass  # dist/joulescope_{VERSION_STR} is the deliverable: no installer.
+
+elif sys.platform.startswith('darwin'):
     # https://blog.macsales.com/28492-create-your-own-custom-icons-in-10-7-5-or-later
     # iconutil --convert icns joulescope_ui/resources/icon.iconset
     # hdiutil create ./dist/joulescope.dmg -srcfolder ./dist/joulescope.app -ov
