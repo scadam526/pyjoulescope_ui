@@ -1523,29 +1523,44 @@ class WaveformWidget(QtWidgets.QWidget):
         self.pubsub.publish(f'registry/{source}/actions/!request', req, defer=True)
 
     def _on_trigger_response(self, value):
-        """Process the trigger source samples from the stream buffer."""
+        """Process the trigger source samples, then continue the scan.
+
+        The stream buffer limits the samples in each response.  Request
+        the next block immediately, rather than on the next paint, so that
+        the scan keeps up with the incoming samples.  The scan stops
+        requesting when it reaches the newest sample, and the next paint
+        restarts it.
+        """
+        if self._trigger_response_process(value) and self._trigger_active():
+            self._trigger_scan()
+
+    def _trigger_response_process(self, value):
+        """Process the trigger source samples from the stream buffer.
+
+        :return: True if the response was for the pending scan request.
+        """
         scanner = self._trigger_scanner
         info = value['info']
         rs = info['time_range_samples']
         start, length = int(rs['start']), int(rs['length'])
         if scanner.is_stale(start):
-            return
+            return False
         if not self._trigger_active():
             scanner.on_response_invalid()
-            return
+            return True
         if value.get('response_type') != 'samples' or length <= 0:
             scanner.on_response_invalid(start + length if length > 0 else None)
-            return
+            return True
         try:
             y = samples_unpack(value['data'], value['data_type'], length)
         except ValueError:
             self._log.warning('trigger: unsupported data type %s', value.get('data_type'))
             scanner.on_response_invalid(start + length)
-            return
+            return True
         positions = scanner.on_response(start, y)
         self._repaint_request = True
         if positions is None or not len(positions):
-            return
+            return True
         fs = float(info['time_map']['counter_rate'])
         k = np.floor(positions)
         frac = positions - k
@@ -1554,9 +1569,10 @@ class WaveformWidget(QtWidgets.QWidget):
                 t = tmap.sample_id_to_timestamp(k.astype(np.uint64))
         except ValueError:
             self._log.warning('trigger: invalid tmap, ignore response')
-            return
+            return True
         t = np.asarray(t, dtype=np.int64) + np.rint(frac * (time64.SECOND / fs)).astype(np.int64)
         scanner.history.extend(t)
+        return True
 
     def _trigger_x_range(self):
         """Compute the x-axis range for the trigger display."""
@@ -3586,6 +3602,27 @@ class WaveformWidget(QtWidgets.QWidget):
                     e['pixel2'] = None
             out.append(e)
         return out
+
+    def trigger_info(self):
+        """Return the trigger state (test-support).
+
+        :return: dict with the trigger status, the displayed trigger time,
+            the scan position, and the recent trigger times.
+        """
+        scanner = self._trigger_scanner
+        history = list(scanner.history._t)
+        return {
+            'status': self._trigger_status,
+            'shown': self._trigger_shown,
+            'epoch': self._trigger_epoch,
+            'config': self._trigger_config,
+            'sample_next': scanner.sample_next,
+            'pending': scanner.is_pending,
+            'history_length': len(history),
+            'history_last': history[-3:],
+            'x_extent': list(self.x_extent),
+            'x_range': list(self.x_range),
+        }
 
     def plot_render_info(self):
         """Return the on-screen paint state (test-support).
