@@ -18,6 +18,84 @@
 # ![Joulescope](https://download.joulescope.com/press/joulescope_logo-PNG-Transparent-Exact-Small.png "Joulescope Logo")
 
 
+## About this fork
+
+This repository is a personal fork of
+[jetperch/pyjoulescope_ui](https://github.com/jetperch/pyjoulescope_ui).
+It adds oscilloscope-style features to the Oscilloscope view's Waveform
+widget.  Jetperch does not provide or support these features, and the
+official Joulescope UI releases do not include them.  To use them,
+run the UI from this repository's source, as described in
+[Developer Howto](#developer-howto).  The rest of this README is the
+original upstream README.
+
+![Trigger and resistance plot](docs/fork_trigger_resistance.png)
+
+### Oscilloscope trigger
+
+The trigger holds repeating waveforms steady while streaming, like a
+standard oscilloscope.  It places a level crossing of the trigger source
+at the trigger position on the time axis, and the time axis displays the
+time relative to the trigger.
+
+* Select the mode in the control bar **Trigger** drop-down:
+  * **Auto** displays each trigger, and follows the newest data when no
+    trigger occurs.
+  * **Normal** displays each trigger, and holds the last trigger when no
+    trigger occurs.
+  * **Single** displays the next trigger, then holds it.  Press **Arm** to
+    capture another.
+* Click **…** next to the mode to configure the source (current, voltage,
+  power, current range, or a general purpose or trigger input), the rising,
+  falling, or either edge, the level, the position, the holdoff, and the
+  noise rejection.  Enter the level with an optional SI prefix and units,
+  such as `150 mA` or `-20u`, or click **Center** for the middle of the
+  displayed signal.
+* Drag the **T** markers to change the level and the position.  Drag the
+  trace left or right to move the trigger position.
+* Right-click a plot and select **Trigger here** to trigger on that plot at
+  the clicked level.
+* The holdoff ignores triggers for a duration after each trigger.  Set the
+  holdoff slightly longer than a burst to trigger on the first edge of each
+  burst.
+
+The trigger examines every raw sample, not just the displayed points, and
+interpolates the crossing between samples, so a locked waveform does not
+jitter.  The trigger operates on live streaming data.  When streaming
+stops, the display holds the last trigger.
+
+### Markers that follow the trigger
+
+Markers (cursors) placed while the trigger is on keep their time relative
+to the trigger as the display refreshes.  Dual markers measure the time,
+frequency, and statistics, such as the peak values, between two points of
+the triggered waveform.  Enable **Show frequency** in the Waveform settings
+to display the frequency.  Right-click a marker and select
+**Follow trigger** to change an existing marker.  The markers hold their
+position when the trigger is off, and follow again when it returns.
+
+### Resistance plot
+
+Click the **Ω** signal button in the control bar to show the resistance,
+R = V / I.  The Joulescope streams current, voltage, and power, so the UI
+computes the resistance from the displayed voltage and current.
+
+* When zoomed in to individual samples, each point is the instantaneous
+  resistance.
+* When zoomed out, each point is the average voltage divided by the average
+  current.
+* Dual markers display the average resistance over the marker interval.
+* When the current is near zero, the resistance becomes very large and
+  changes sign with the current noise.  Division by zero displays as
+  missing data.
+* The summary waveform, the trigger, the analysis tools, and JLS file
+  export use the voltage and current signals, not the resistance.
+
+See the [Changelog](CHANGELOG.md) 1.9.0 section for the complete list of
+changes in this fork.
+
+---
+
 Welcome to the Joulescope™ User Interface software repo!
 Joulescope is an affordable, precision energy
 analyzer that enables you to build better products.
