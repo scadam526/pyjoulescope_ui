@@ -28,6 +28,7 @@ from .interval_widget import IntervalWidget
 from .y_range_widget import YRangeWidget
 from . import trigger as trigger_mod
 from joulescope_ui.spectrum_engine import unpack as samples_unpack
+from . import derived
 from joulescope_ui.time_map import TimeMap
 import pyjls
 from joulescope_ui.jls_v2 import ChunkMeta
@@ -59,6 +60,8 @@ _Y_INNER_LINE = 4
 _Y_PLOT_MIN = 16
 _MARKER_RSP_OFFSET = (1 << 48)
 _MARKER_RSP_STEP = 512
+_MARKER_RSP_DERIVED_NUM = 256  # plot_id offset for a derived plot numerator request
+_MARKER_RSP_DERIVED_DEN = 384  # plot_id offset for a derived plot denominator request
 _TRIGGER_RSP_ID = (1 << 47)  # trigger source scan, below the marker rsp_id range
 _JS220_AXIS_R = {0: '10 A', 1: '180 mA', 2: '18 mA', 3: '1.8 mA', 4: '180 µA', 5: '18 µA',
                  6: 'off', 7: 'off', 8: 'off'}
@@ -126,6 +129,7 @@ _STATE_DEFAULT = {
         _analog_plot('i', True, 'A', N_('Current'), 'C', range_bounds=[-50, 50]),
         _analog_plot('v', True, 'V', N_('Voltage'), range_bounds=[-250, 250]),
         _analog_plot('p', False, 'W', N_('Power'), 'J', range_bounds=[-1000, 1000]),
+        _analog_plot('z', False, 'Ω', N_('Resistance'), range_bounds=[-1e15, 1e15]),  # derived: v / i
         {
                 'quantity': 'r',
                 'name': N_('Current range'),
@@ -148,8 +152,41 @@ _STATE_DEFAULT = {
 
 
 _QUANTITIES = [[p['quantity'], p['name']] for p in _STATE_DEFAULT['plots']]
+_PLOT_POSITION_FIELDS = ('index', 'y_region', 'y_map')  # computed from the plot order, not restored
+# The summary and trigger request signals from the stream buffer, which does not store derived signals.
+_BUFFER_QUANTITIES = [q for q in _QUANTITIES if not derived.is_derived(q[0])]
 _QUANTITIES_TO_NAME = dict([[p['quantity'], p['name']] for p in _STATE_DEFAULT['plots']])
 _NAME_TO_QUANTITIES = dict([[p['name'], p['quantity']] for p in _STATE_DEFAULT['plots']])
+
+
+def _state_plots_migrate(state):
+    """Add the default plots that a saved state does not have.
+
+    :param state: The saved waveform state.
+    :return: The new state with the missing plots inserted in the default
+        order, or None when the state already has all plots.
+
+    A state saved by an earlier version lacks newer plots, such as
+    resistance.  Insert each missing plot after the nearest preceding
+    default plot so that the plot order matches the defaults.
+    """
+    plots = state.get('plots', [])
+    existing = {p.get('quantity') for p in plots}
+    order = [p['quantity'] for p in _STATE_DEFAULT['plots']]
+    missing = [p for p in _STATE_DEFAULT['plots'] if p['quantity'] not in existing]
+    if not missing:
+        return None
+    state = copy.deepcopy(state)
+    plots = state['plots']
+    for plot in missing:
+        idx = 0
+        for quantity in reversed(order[:order.index(plot['quantity'])]):
+            matches = [k for k, p in enumerate(plots) if p.get('quantity') == quantity]
+            if matches:
+                idx = matches[0] + 1
+                break
+        plots.insert(idx, copy.deepcopy(plot))
+    return state
 
 
 def _si_format(value, units, prefix_preferred=None, precision=None):
@@ -554,7 +591,7 @@ class WaveformWidget(QtWidgets.QWidget):
         'summary_quantity': {
             'dtype': 'str',
             'brief': N_('The signal quantity to show in the summary.'),
-            'options': _QUANTITIES,
+            'options': _BUFFER_QUANTITIES,
             'default': 'i',
         },
         'x_axis_annotation_mode': {
@@ -624,7 +661,7 @@ class WaveformWidget(QtWidgets.QWidget):
         'trigger_source': {
             'dtype': 'str',
             'brief': N_('The trigger source signal.'),
-            'options': _QUANTITIES,
+            'options': _BUFFER_QUANTITIES,  # the trigger scans raw samples from the stream buffer
             'default': 'i',
         },
         'trigger_edge': {
@@ -744,6 +781,7 @@ class WaveformWidget(QtWidgets.QWidget):
         self._signal_subscriptions = {}   # signal_id -> (topic, fn, flags)
         self._points = PointsF()
         self._marker_data = {}  # rsp_id -> data,
+        self._marker_derived = {}  # (marker_id, plot_id) -> {'num': data, 'den': data} for derived plots
         self._annotations_request_defer = []
         self._await = []  # defer topic publish on JLS user_data
         self._pin_attention_expire = 0.0  # end time for the pinned x-axis indication
@@ -949,7 +987,10 @@ class WaveformWidget(QtWidgets.QWidget):
                     for plot_quantity, metadata in v.get('plots', {}).items():
                         for plot in state['plots']:
                             if plot['quantity'] == plot_quantity:
-                                plot.update(metadata)
+                                # Keep this layout's plot position.  Files saved
+                                # with other plots, like before resistance, differ.
+                                plot.update({field: field_value for field, field_value in metadata.items()
+                                             if field not in _PLOT_POSITION_FIELDS})
                                 state_update = True
                                 break
                     if state_update:
@@ -996,6 +1037,7 @@ class WaveformWidget(QtWidgets.QWidget):
         if sub is not None:
             self.pubsub.unsubscribe(*sub)
         self._signal_forget(signal_id)
+        self._derived_signals_update(f'{source}.{device}')
         self._repaint_request = True
         self._subsources_update()
 
@@ -1039,6 +1081,10 @@ class WaveformWidget(QtWidgets.QWidget):
             self.state = copy.deepcopy(_STATE_DEFAULT)
             if not is_device:
                 self.name = self._kwargs.get('name', _NAME)
+        else:
+            state = _state_plots_migrate(self.state)
+            if state is not None:
+                self.state = state
         if self.annotations is None:
             self.annotations = {
                 'next_id': 0,  # for text annotations
@@ -1203,6 +1249,7 @@ class WaveformWidget(QtWidgets.QWidget):
         if value == [0, 0]:  # no data
             self._log.info('_on_signal_range(%s, %s) remove', topic, value)
             self._signal_forget(signal_id)
+            self._derived_signals_update(f'{source}.{device}')
             self._repaint_request = True
             self._subsources_update()
             return
@@ -1224,7 +1271,64 @@ class WaveformWidget(QtWidgets.QWidget):
             d['range'] = value
             d['changed'] = time.time()
             self._repaint_request = True
+        self._derived_signals_update(f'{source}.{device}')
         return None
+
+    def _derived_signals_update(self, subsource):
+        """Add, update, or remove the derived signals for a subsource.
+
+        :param subsource: The '{source}.{device}' string.
+
+        A derived signal, such as resistance, exists when all of its source
+        signals exist.  The stream buffer does not store derived signals, so
+        the Waveform widget computes their data from the source signal data.
+        """
+        for quantity, sources in derived.DERIVED.items():
+            signal_id = f'{subsource}.{quantity}'
+            src = [self._signals.get(f'{subsource}.{q}') for q in sources]
+            ranges = [s.get('range') if s is not None else None for s in src]
+            if any(r is None for r in ranges):
+                if signal_id in self._signals:
+                    self._signal_forget(signal_id)
+                    self._subsources_update()
+                continue
+            r = [max(r[0] for r in ranges), min(r[1] for r in ranges)]
+            d = self._signals.get(signal_id)
+            if d is None:
+                self._log.info('derived signal add %s', signal_id)
+                d = {
+                    'id': signal_id,
+                    'rsp_id': self._signals_rsp_id_next,
+                    'range': None,
+                    'derived': sources,
+                }
+                self._signals[signal_id] = d
+                self._signals_by_rsp_id[self._signals_rsp_id_next] = d
+                self._signals_rsp_id_next += 1
+                self._subsources_update()
+            if r != d['range']:
+                d['range'] = r
+                self._repaint_request = True
+
+    def _derived_data_update(self, signal_id):
+        """Compute derived signal data after a source signal update.
+
+        :param signal_id: The updated '{source}.{device}.{quantity}' signal.
+        """
+        subsource, quantity = signal_id.rsplit('.', 1)
+        for d_quantity, (num, den) in derived.DERIVED.items():
+            if quantity not in (num, den):
+                continue
+            d_signal_id = f'{subsource}.{d_quantity}'
+            if d_signal_id not in self._signals:
+                continue
+            num_data = self._signals_data.get(f'{subsource}.{num}')
+            den_data = self._signals_data.get(f'{subsource}.{den}')
+            if num_data is None or den_data is None:
+                continue
+            data = derived.ratio(num_data['data'], den_data['data'])
+            if data is not None:  # else wait for the matching response
+                self._signals_data[d_signal_id] = {'data': data}
 
     @property
     def _repaint_request(self):
@@ -1745,6 +1849,9 @@ class WaveformWidget(QtWidgets.QWidget):
         for signal_id, signal in self._signals.items():
             if not self.is_signal_active(signal_id):
                 continue
+            if signal.get('derived'):
+                signal['changed'] = None  # computed from the source signal responses
+                continue
             if force or signal.get('changed', None):
                 signal['changed'] = None
                 self._request_signal(signal, self.x_range)
@@ -1781,11 +1888,45 @@ class WaveformWidget(QtWidgets.QWidget):
                 x0, x1 = marker['pos1'], marker['pos2']
             if x0 > x1:
                 x0, x1 = x1, x0
-            self._request_signal(signal_id, (x0, x1), rsp_id=rsp_id, length=1)
+            if derived.is_derived(quantity):
+                # request the source signals, then compute in _marker_derived_response
+                num, den = derived.sources(quantity)
+                self._marker_derived[(marker_id, plot_id)] = {}
+                for offset, q in [(_MARKER_RSP_DERIVED_NUM, num), (_MARKER_RSP_DERIVED_DEN, den)]:
+                    self._request_signal(f'{traces[0][1]}.{q}', (x0, x1), length=1,
+                                         rsp_id=_marker_to_rsp_id(marker_id, offset + plot_id))
+            else:
+                self._request_signal(signal_id, (x0, x1), rsp_id=rsp_id, length=1)
+
+    def _marker_derived_response(self, marker_id, plot_id, data):
+        """Combine the source signal responses for a derived plot dual marker.
+
+        :param marker_id: The marker id.
+        :param plot_id: The plot id plus _MARKER_RSP_DERIVED_NUM or
+            _MARKER_RSP_DERIVED_DEN.
+        :param data: The response data for the source signal.
+        """
+        if plot_id >= _MARKER_RSP_DERIVED_DEN:
+            part, plot_id = 'den', plot_id - _MARKER_RSP_DERIVED_DEN
+        else:
+            part, plot_id = 'num', plot_id - _MARKER_RSP_DERIVED_NUM
+        key = (marker_id, plot_id)
+        parts = self._marker_derived.get(key)
+        if parts is None:
+            return  # stale response
+        parts[part] = data
+        if 'num' in parts and 'den' in parts:
+            # the ratio of the averages over the marker interval
+            value = derived.ratio(parts['num'], parts['den'])
+            if value is not None:
+                self._marker_data[key] = value
+                self._marker_derived.pop(key, None)
 
     def _request_signal(self, signal, x_range, rsp_id=None, length=None):
         if isinstance(signal, str):
             signal = self._signals[signal]
+        if signal.get('derived'):
+            return  # the stream buffer does not store derived signals
         source, subsignal_id = signal['id'].split('.', 1)
         topic_req = f'registry/{source}/actions/!request'
         topic_rsp = f'{get_topic_name(self)}/callbacks/!response'
@@ -1902,7 +2043,10 @@ class WaveformWidget(QtWidgets.QWidget):
 
         if rsp_id >= _MARKER_RSP_OFFSET:
             marker_id, plot_id = _marker_from_rsp_id(rsp_id)
-            self._marker_data[(marker_id, plot_id)] = data
+            if plot_id >= _MARKER_RSP_DERIVED_NUM:
+                self._marker_derived_response(marker_id, plot_id, data)
+            else:
+                self._marker_data[(marker_id, plot_id)] = data
         elif rsp_id == 1:
             if self._summary_data is None:
                 self._summary_data = {}
@@ -1918,6 +2062,7 @@ class WaveformWidget(QtWidgets.QWidget):
             if signal['id'] not in self._signals_data:
                 self._signals_data[signal['id']] = {}
             self._signals_data[signal['id']]['data'] = data
+            self._derived_data_update(signal['id'])
         self._process_deferred()
 
     def _y_transform_fwd(self, plot, value):
@@ -4447,7 +4592,7 @@ class WaveformWidget(QtWidgets.QWidget):
             range_action.setDefaultWidget(range_widget)
             range_mode_exact_menu.addAction(range_action)
 
-        if plot['quantity'] in ['i', 'p']:
+        if plot['quantity'] in ['i', 'p', 'z']:
             scale = plot['scale']
             scale_mode = menu.addMenu(N_('Scale'))
             scale_group = QtGui.QActionGroup(scale_mode)
@@ -4477,7 +4622,7 @@ class WaveformWidget(QtWidgets.QWidget):
                 for log_power in range(1, -10, -1):
                     logarithm_action_gen(log_power)
 
-        if plot['quantity'] in ['i', 'v', 'p'] and plot['scale'] != 'logarithmic':
+        if plot['quantity'] in ['i', 'v', 'p', 'z'] and plot['scale'] != 'logarithmic':
             prefix_preferred = plot['prefix_preferred']
             prefix_menu = menu.addMenu(N_('Preferred prefix'))
             prefix_group = QtGui.QActionGroup(prefix_menu)
@@ -4488,7 +4633,11 @@ class WaveformWidget(QtWidgets.QWidget):
                                lambda: self._on_menu_y_prefix_preferred(idx, value),
                                checkable=True, checked=(value == prefix_preferred))
 
-            for prefix in ['auto', '', 'm', 'µ', 'n']:
+            if plot['quantity'] == 'z':
+                prefixes = ['auto', 'G', 'M', 'k', '', 'm']  # resistance spans large values
+            else:
+                prefixes = ['auto', '', 'm', 'µ', 'n']
+            for prefix in prefixes:
                 prefix_action_gen(prefix)
 
         name_menu = menu.addMenu(N_('Name'))
@@ -4573,7 +4722,7 @@ class WaveformWidget(QtWidgets.QWidget):
             CallableAction(menu, N_('Y-axis auto range'),
                            lambda: self._on_menu_y_range_mode(idx, 'auto'))
 
-        if not self._is_file_mode and 'y_map' in plot:
+        if not self._is_file_mode and 'y_map' in plot and not derived.is_derived(plot['quantity']):
             topic = f'{get_topic_name(self)}/actions/!trigger'
             quantity = plot['quantity']
             if trigger_mod.is_digital(quantity):
@@ -4678,8 +4827,8 @@ class WaveformWidget(QtWidgets.QWidget):
                 if plot['enabled']:
                     quantity = plot['quantity']
                     signal_id = f'{subsource}.{quantity}'
-                    if signal_id in self._signals:
-                        signals.append(signal_id)
+                    if signal_id in self._signals and not derived.is_derived(quantity):
+                        signals.append(signal_id)  # tools request from the stream buffer
         return signals
 
     def _annotations_filter(self, x_range):
@@ -4894,7 +5043,7 @@ class WaveformWidget(QtWidgets.QWidget):
             quantity = self.state['plots'][plot_idx]['quantity']
             value['quantity'] = quantity
             traces = self._traces(quantity)
-            if len(traces):
+            if len(traces) and not derived.is_derived(quantity):
                 value['signal_default'] = f'{traces[0][1]}.{quantity}'
 
         self.pubsub.publish(f'registry/{unique_id}/actions/!run', value)
@@ -5637,8 +5786,8 @@ class WaveformWidget(QtWidgets.QWidget):
 
             for plot in self.state['plots']:
                 z = []
-                if not plot['enabled']:
-                    continue
+                if not plot['enabled'] or derived.is_derived(plot['quantity']):
+                    continue  # JLS files store the source signals, not derived signals
                 plot_index = plot['index']
                 w.signal_def(signal_id=signal_id, source_id=1, sample_rate=sample_rate,
                              name=TO_JLS_SIGNAL_NAME[plot['quantity']], units=plot['units'])

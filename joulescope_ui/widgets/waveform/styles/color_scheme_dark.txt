@@ -26,6 +26,7 @@ waveform.trace4 = #00ff00ff
 waveform.plot_i = #ffff00ff
 waveform.plot_v = #00ffffff
 waveform.plot_p = #ff00ffff
+waveform.plot_z = #a0ff60ff
 waveform.plot_r = #c080ffff
 waveform.plot_0 = #ff8000ff
 waveform.plot_1 = #ffff00ff

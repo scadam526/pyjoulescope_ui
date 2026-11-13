@@ -119,7 +119,15 @@ _TOOLTIP_SIGNAL = tooltip_format(
     N_("Show/hide signals"),
     N_("Click to toggle the signal axis display in the Waveform widget."))
 
-_SIGNALS = ['i', 'v', 'p', 'r', '0', '1', '2', '3', 'T']
+_TOOLTIP_SIGNAL_RESISTANCE = tooltip_format(
+    N_("Show/hide resistance"),
+    N_("""Click to toggle the resistance display in the Waveform widget.
+    The resistance is voltage / current, computed from the displayed
+    voltage and current data."""))
+
+_SIGNALS = ['i', 'v', 'p', 'z', 'r', '0', '1', '2', '3', 'T']
+_SIGNAL_TEXT = {'z': 'Ω'}  # button text when not the quantity
+_SIGNAL_TOOLTIP = {'z': _TOOLTIP_SIGNAL_RESISTANCE}
 
 
 class WaveformControlWidget(QtWidgets.QWidget):
@@ -315,11 +323,11 @@ class WaveformControlWidget(QtWidgets.QWidget):
 
     def _add_signal(self, signal):
         b = QtWidgets.QPushButton(self)
-        b.setText(signal)
+        b.setText(_SIGNAL_TEXT.get(signal, signal))
         b.setObjectName(f'signal_button_{signal}')
         b.setCheckable(True)
         b.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
-        b.setToolTip(_TOOLTIP_SIGNAL)
+        b.setToolTip(_SIGNAL_TOOLTIP.get(signal, _TOOLTIP_SIGNAL))
         b.setFixedSize(*_BUTTON_SIZE)
         self._signal_layout.addWidget(b)
         self._signals[signal] = b

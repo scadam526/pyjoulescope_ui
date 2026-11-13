@@ -42,6 +42,14 @@ This file contains the list of changes made to pyjoulescope_ui.
   points of a triggered waveform.  Right-click a marker and select
   "Follow trigger" to change existing markers.  The markers hold their
   position when the trigger is off, and follow again when it returns.
+* Added a resistance plot to the Waveform widget.  Click the Ω signal button
+  to show the resistance, R = V / I, computed from the displayed voltage
+  and current.  When zoomed in to individual samples, each point is the
+  instantaneous resistance.  When zoomed out, each point is the average
+  voltage divided by the average current.  Dual markers display the
+  average resistance over the marker interval.
+* Fixed opening a JLS file saved with different Waveform plots assigning
+  the restored plot settings to the wrong plot position.
 
 
 ## 1.8.0
