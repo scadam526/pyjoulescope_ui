@@ -26,6 +26,7 @@ from joulescope_ui import time64
 from joulescope_ui.widgets.waveform.waveform_widget import WaveformWidget, _TRIGGER_RSP_ID
 
 
+_SUB = 'JsdrvStreamBuffer:001.JS220-000001'
 _T0 = time64.YEAR * 55
 _MS = time64.MILLISECOND
 _FS = 1_000_000.0
@@ -63,10 +64,24 @@ class TestWaveformTrigger(unittest.TestCase):
         w.trigger_holdoff = 0.0
         w.x_extent = [_T0, _T0 + 1000 * _MS]
         w.x_range = [_T0 + 990 * _MS, _T0 + 1000 * _MS]  # 10 ms view
+        # one device trace with a current signal of samples 0..2000 in the stream buffer
+        w.unique_id = 'WaveformWidget:test'
+        w.pubsub = _PubSub()
+        w.trace_priority = [0, None, None, None]
+        w.trace_subsources = [_SUB, None, None, None]
+        w.subsources = [_SUB]
+        w.state = {'plots': [{'quantity': 'i', 'index': 0, 'enabled': True,
+                              'range': [0.0, 1.0], 'scale': 'linear'}]}
+        w._signals = {f'{_SUB}.i': {
+            'id': f'{_SUB}.i', 'rsp_id': 2, 'range': list(w.x_extent),
+            'range_samples': {'start': 0, 'end': 2001, 'length': 2001}, 'sample_rate': _FS}}
         self.widget = w
 
     def tearDown(self):
         self.widget.close()
+
+    def _requests(self):
+        return [v for t, v in self.widget.pubsub.published if t.endswith('/actions/!request')]
 
     def _history(self, times_ms):
         self.widget._trigger_scanner.history.extend([_T0 + t * _MS for t in times_ms])
@@ -154,15 +169,36 @@ class TestWaveformTrigger(unittest.TestCase):
 
     def test_response_to_trigger_times(self):
         w = self.widget
+        w.trigger_level = 0.5
         s = w._trigger_scanner
-        s.detector.configure('rising', 0.5)
-        s.request(0, 2000, 1000, now=0.0)  # requests 1000..2000
-        x = np.zeros(1001, dtype=np.float32)
-        x[201:] = 1.0  # rising between samples 1200 and 1201
-        w.on_callback_response(None, self._response(1000, x))
+        w._trigger_scan()  # configure, then request samples 0..2000
+        self.assertEqual([(0, 2000)], [(r['start'], r['end']) for r in self._requests()])
+        x = np.zeros(2001, dtype=np.float32)
+        x[1201:] = 1.0  # rising between samples 1200 and 1201
+        w.on_callback_response(None, self._response(0, x))
         t_expect = _T0 + 1200 * time64.SECOND // int(_FS) + int(np.rint(0.5 * time64.SECOND / _FS))
         self.assertEqual(t_expect, s.history.latest())
         self.assertEqual(2001, s.sample_next)
+        self.assertEqual(1, len(self._requests()))  # caught up: no further request
+
+    def test_partial_response_continues_scan(self):
+        # The stream buffer limits the samples per response.  Continue
+        # immediately rather than waiting for the next paint.
+        w = self.widget
+        w.trigger_level = 0.5
+        w._trigger_scan()  # requests samples 0..2000
+        w.on_callback_response(None, self._response(0, np.zeros(500, dtype=np.float32)))
+        requests = [(r['start'], r['end']) for r in self._requests()]
+        self.assertEqual([(0, 2000), (500, 2000)], requests)
+        self.assertTrue(w._trigger_scanner.is_pending)
+
+    def test_stale_response_does_not_continue(self):
+        w = self.widget
+        w._trigger_scan()  # requests samples 0..2000
+        w._trigger_scanner.reset(start=1500)  # such as single mode arm
+        w._trigger_scan()  # requests samples 1500..2000
+        w.on_callback_response(None, self._response(0, np.zeros(500, dtype=np.float32)))
+        self.assertEqual(2, len(self._requests()))
 
     def test_stale_response_ignored(self):
         w = self.widget
