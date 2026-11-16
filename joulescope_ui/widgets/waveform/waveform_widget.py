@@ -712,6 +712,18 @@ class WaveformWidget(QtWidgets.QWidget):
                          'Set the holdoff slightly longer than a burst to trigger on the first edge of each burst.'),
             'default': 0.0,
         },
+        'trigger_display_only': {
+            'dtype': 'bool',
+            'brief': N_('Trigger only on the displayed trace.'),
+            'detail': P_([
+                N_('When off, the trigger detects edges on every sample, which includes '
+                   'short pulses that the displayed average trace does not show.'),
+                N_('When on, the trigger detects edges on the sample averages for each '
+                   'pixel column, like the displayed trace.  Short pulses that average out '
+                   'at the current zoom do not trigger.  Zooming in shows and triggers on shorter pulses.'),
+            ]),
+            'default': False,
+        },
     }
 
     def __init__(self, parent=None, **kwargs):
@@ -1573,14 +1585,17 @@ class WaveformWidget(QtWidgets.QWidget):
         except (TypeError, ValueError):
             holdoff = 0.0
         edge = self.trigger_edge if self.trigger_edge in trigger_mod.EDGES else 'rising'
-        config = (signal_id, edge, level, holdoff)
+        incr = self._trigger_incr(fs)
+        config = (signal_id, edge, level, holdoff, incr)
         detector = self._trigger_scanner.detector
         if config != self._trigger_config:
             arm = self._trigger_arm_pending or self._trigger_status == 'stop'
             if self._trigger_config is not None and self.trigger_mode == 'single':
                 arm = True  # changing the trigger re-arms single mode
             self._trigger_reset(arm=arm)
-            detector.configure(edge, level, 0.0, holdoff)
+            self._trigger_scanner.average.incr = incr
+            # The detector holdoff is in its input units: samples or blocks.
+            detector.configure(edge, level, 0.0, holdoff / incr if incr else holdoff)
             self._trigger_config = config
 
         # The hysteresis follows the plot y-axis range.  Update without reset.
@@ -1595,6 +1610,27 @@ class WaveformWidget(QtWidgets.QWidget):
             except (TypeError, ValueError, KeyError):
                 hysteresis = 0.0
         detector.hysteresis = hysteresis
+
+    def _trigger_incr(self, fs):
+        """The samples per average for the displayed-data trigger.
+
+        :param fs: The trigger source sample rate in Hz.
+        :return: The samples per plot pixel column, or 0 to trigger on
+            every sample.  The plot draws individual samples when zoomed
+            in to fewer than 2 samples per pixel, which returns 0.
+        """
+        if not getattr(self, 'trigger_display_only', False):
+            return 0
+        if self._trigger_status == 'stop' and self._trigger_config is not None:
+            # single mode captured: zooming must not re-arm and discard it
+            return self._trigger_config[-1]
+        x_info = self._x_geometry_info.get('plot')
+        if x_info is None:
+            return 0
+        x0, x1 = self.x_range
+        e0, e1 = self.x_extent
+        dt = (x1 - x0) if x1 > x0 else (e1 - e0)
+        return trigger_mod.average_increment(dt / time64.SECOND, fs, x_info[0])
 
     def _trigger_scan(self):
         """Request the next block of trigger source samples."""
@@ -1819,6 +1855,9 @@ class WaveformWidget(QtWidgets.QWidget):
         self._plot_data_invalidate()
 
     def on_setting_trigger_holdoff(self):
+        self._repaint_request = True
+
+    def on_setting_trigger_display_only(self):
         self._repaint_request = True
 
     def _request_data(self, force=False):

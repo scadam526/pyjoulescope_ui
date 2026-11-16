@@ -181,6 +181,42 @@ class TestWaveformTrigger(unittest.TestCase):
         self.assertEqual(2001, s.sample_next)
         self.assertEqual(1, len(self._requests()))  # caught up: no further request
 
+    def _spike_response(self):
+        x = np.zeros(2001, dtype=np.float32)
+        x[1201:1203] = 1.0  # 2 µs spike in a 10 ms view of 100 pixels: 101 samples per pixel
+        return self._response(0, x)
+
+    def test_spike_triggers_all_samples(self):
+        w = self.widget
+        w.trigger_level = 0.5
+        w._x_geometry_info = {'plot': (100, 0, 99)}
+        w._trigger_scan()
+        w.on_callback_response(None, self._spike_response())
+        self.assertEqual(1, len(w._trigger_scanner.history))
+
+    def test_spike_ignored_display_only(self):
+        w = self.widget
+        w.trigger_level = 0.5
+        w.trigger_display_only = True
+        w._x_geometry_info = {'plot': (100, 0, 99)}
+        w._trigger_scan()
+        self.assertEqual(101, w._trigger_scanner.average.incr)
+        w.on_callback_response(None, self._spike_response())
+        self.assertEqual(0, len(w._trigger_scanner.history))
+
+    def test_display_only_holds_single_capture_on_zoom(self):
+        w = self.widget
+        w.trigger_mode = 'single'
+        w.trigger_display_only = True
+        w._x_geometry_info = {'plot': (100, 0, 99)}
+        w._trigger_scan()
+        incr = w._trigger_scanner.average.incr
+        w._trigger_status = 'stop'  # captured
+        w.x_range = [_T0 + 995 * _MS, _T0 + 1000 * _MS]  # zoom in
+        w._trigger_scan()
+        self.assertEqual('stop', w._trigger_status)
+        self.assertEqual(incr, w._trigger_scanner.average.incr)
+
     def test_partial_response_continues_scan(self):
         # The stream buffer limits the samples per response.  Continue
         # immediately rather than waiting for the next paint.
