@@ -29,6 +29,7 @@ from .y_range_widget import YRangeWidget
 from . import trigger as trigger_mod
 from joulescope_ui.spectrum_engine import unpack as samples_unpack
 from . import derived
+from . import x_align
 from joulescope_ui.time_map import TimeMap
 import pyjls
 from joulescope_ui.jls_v2 import ChunkMeta
@@ -752,6 +753,11 @@ class WaveformWidget(QtWidgets.QWidget):
         self._x_summary_map = TimeMap()
         self._x_epoch_state = {}
         self._x_epoch = None
+        # Summary requests aligned to the sample grid, see x_align.
+        self._x_align_requests = {}  # signal_id -> (start, end, length) in samples
+        self._x_align_incr = None  # ((signal_id, duration, width), incr)
+        self._x_align_ref = None  # (samples per time64, width) when aligned
+        self._x_range_draw = None  # (x_range, aligned x_range) for drawing
         self._mouse_pos = None
         self._mouse_pos_start = None
         self._wheel_accum_degrees = np.zeros(2, dtype=np.float64)
@@ -1832,6 +1838,8 @@ class WaveformWidget(QtWidgets.QWidget):
         self.x_range = self._compute_x_range()
         if trigger_active and list(self.x_range) != x_range_prev:
             force = True  # the triggered view moved: request the new range
+        # The trigger positions the view at the trigger time: keep it exact.
+        self._x_align_update(enable=not trigger_active)
         # x0, x1 = self.x_range
         # xc = (x0 >> 1) + (x1 >> 1)
         # self._log.info(f'request x_range({x0}, {x1}) {xc} {time64.as_datetime(xc)}')
@@ -1854,7 +1862,11 @@ class WaveformWidget(QtWidgets.QWidget):
                 continue
             if force or signal.get('changed', None):
                 signal['changed'] = None
-                self._request_signal(signal, self.x_range)
+                aligned = self._x_align_requests.get(signal_id)
+                if aligned is None:
+                    self._request_signal(signal, self._x_range_draw[1])
+                else:  # (start, end, length) in samples
+                    self._request_signal(signal, aligned[:2], length=aligned[2], time_type='samples')
                 changed = True
         if self.state is not None:
             self._x_markers_position_update()
@@ -1922,7 +1934,130 @@ class WaveformWidget(QtWidgets.QWidget):
                 self._marker_data[key] = value
                 self._marker_derived.pop(key, None)
 
-    def _request_signal(self, signal, x_range, rsp_id=None, length=None):
+    def _x_align_tmap(self, signal_id, signal):
+        """Get the local map between time64 and sample ids for a signal.
+
+        :return: The x_align.linear_map or None when unavailable.
+
+        Prefer the most recent response, which covers the current view.
+        A single linear map over the entire buffer or file accumulates the
+        sample clock drift.
+        """
+        sample_rate = signal.get('sample_rate')
+        sig_d = self._signals_data.get(signal_id)
+        if sig_d is not None:
+            d = sig_d['data']
+            tmap = x_align.linear_map(d.get('time_range_utc'), d.get('time_range_samples'), sample_rate)
+            if tmap is not None:
+                return tmap
+        utc, samples = signal.get('range'), signal.get('range_samples')
+        if not utc or not samples:
+            return None
+        return x_align.linear_map({'start': utc[0], 'end': utc[1]}, samples, sample_rate)
+
+    def _x_align_update(self, enable):
+        """Align the signal requests and the drawn x-axis range.
+
+        :param enable: False to request and draw self.x_range unchanged.
+
+        Updates self._x_align_requests and self._x_range_draw.
+        See x_align for details.
+        """
+        self._x_align_requests = {}
+        self._x_align_ref = None
+        x_range = [int(x) for x in self.x_range]
+        view = x_range
+        x_info = self._x_geometry_info.get('plot')
+        signals = [(signal_id, signal) for signal_id, signal in self._signals.items()
+                   if self.is_signal_active(signal_id) and not signal.get('derived')]
+        if enable and x_info is not None and len(signals) and x_range[1] > x_range[0]:
+            width, duration = x_info[0], x_range[1] - x_range[0]
+            # The first signal sets the grid, and the other signals match it.
+            ref_id, ref = signals[0]
+            ref_tmap = self._x_align_tmap(ref_id, ref)
+            if ref_tmap is not None:
+                self._x_align_ref = (ref_tmap[2], width)
+                # Keep the samples per point while the view duration and
+                # width are unchanged, even as the time map estimate varies.
+                key = (ref_id, duration, width)
+                if self._x_align_incr is None or self._x_align_incr[0] != key:
+                    self._x_align_incr = (key, x_align.increment(duration, ref_tmap[2], width))
+                incr = self._x_align_incr[1]
+                if self.pin_right:
+                    anchor = 'right'  # streaming: the newest complete point
+                elif self.pin_left:
+                    anchor = 'left'
+                else:
+                    anchor = 'center'
+                rv = self._x_align_signal(ref, ref_tmap, x_range, incr, width, anchor)
+                if rv is not None:
+                    self._x_align_requests[ref_id] = rv[0]
+                    view = rv[1]
+                    for signal_id, signal in signals[1:]:
+                        tmap = self._x_align_tmap(signal_id, signal)
+                        if tmap is None:
+                            continue
+                        # Same sample rate: same points, for derived signals.
+                        # Other rates request the drawn view by time.
+                        if int(round(incr * tmap[2] / ref_tmap[2])) != incr:
+                            continue
+                        rv = self._x_align_signal(signal, tmap, view, incr, width, 'left', match=True)
+                        if rv is not None:
+                            self._x_align_requests[signal_id] = rv[0]
+        self._x_range_draw = (x_range, view)
+
+    def _x_align_signal(self, signal, tmap, x_range, incr, length, anchor, match=False):
+        """Align the request for one signal.
+
+        :return: ((start, end, length), view) or None.
+        """
+        sample_range = None
+        r = signal.get('range_samples')
+        if r:
+            # The stream buffer end is exclusive: exclude it for all sources.
+            sample_range = (int(r['start']), int(r['end']) - 1)
+        rv = x_align.align(x_range, tmap, incr, length, anchor=anchor, match=match,
+                           sample_range=sample_range)
+        if rv is None:
+            return None
+        start, length, view = rv
+        return (start, start + length * incr - 1, length), view
+
+    def _x_align_duration(self, duration):
+        """Predict the drawn duration for a view duration.
+
+        :param duration: The x_range duration in time64.
+        :return: The drawn duration in time64.
+        """
+        if self._x_align_ref is None:
+            return duration
+        k, width = self._x_align_ref
+        incr = x_align.increment(duration, k, width)
+        if not incr:
+            return duration
+        return x_align.duration(incr, k, width)
+
+    def _x_range_drawn(self):
+        """The x-axis range to draw, aligned to the requested data.
+
+        :return: The [x0, x1] range in time64.
+        """
+        if self._x_range_draw is not None:
+            x_range, view = self._x_range_draw
+            if self.x_range is not None and x_range == [int(x) for x in self.x_range]:
+                return view
+        return self.x_range  # changed since the last request: not yet aligned
+
+    def _request_signal(self, signal, x_range, rsp_id=None, length=None, time_type='utc'):
+        """Request signal data.
+
+        :param signal: The signal or signal_id.
+        :param x_range: The (start, end) range in time_type units.
+        :param rsp_id: The response id.  None uses the signal's rsp_id.
+        :param length: The number of points.  None uses the plot width.
+        :param time_type: 'utc' for time64 x_range or 'samples' for
+            inclusive sample ids.
+        """
         if isinstance(signal, str):
             signal = self._signals[signal]
         if signal.get('derived'):
@@ -1938,7 +2073,7 @@ class WaveformWidget(QtWidgets.QWidget):
         if length > 0:
             req = {
                 'signal_id': subsignal_id,
-                'time_type': 'utc',
+                'time_type': time_type,
                 'rsp_topic': topic_rsp,
                 'rsp_id': signal['rsp_id'] if rsp_id is None else rsp_id,
                 'start': x_range[0],
@@ -1987,7 +2122,14 @@ class WaveformWidget(QtWidgets.QWidget):
         sample_ids = value['info']['time_range_samples']
         if sample_ids['length'] == 0:
             return
-        x = np.linspace(sample_ids['start'], sample_ids['end'], sample_ids['length'], dtype=np.uint64)
+        s_start, s_end, s_length = int(sample_ids['start']), int(sample_ids['end']), int(sample_ids['length'])
+        incr = (s_end + 1 - s_start) // s_length
+        if value.get('response_type') == 'summary' and incr * s_length == s_end + 1 - s_start:
+            # Each summary point starts at its first sample, which keeps
+            # aligned points exactly one pixel apart.  See x_align.
+            x = np.arange(s_length, dtype=np.uint64) * np.uint64(incr) + np.uint64(s_start)
+        else:
+            x = np.linspace(s_start, s_end, s_length, dtype=np.uint64)
         tmap = value['info']['tmap']
         try:
             with tmap:
@@ -2696,7 +2838,7 @@ class WaveformWidget(QtWidgets.QWidget):
         y2_text = y - 1 * label_h + label_a
 
         major_count_max = plot_width / s['x_tick_width_pixels_min']
-        x_range64 = self.x_range
+        x_range64 = self._x_range_drawn()
         x_duration_s = (x_range64[1] - x_range64[0]) / time64.SECOND
         if (plot_width > 1) and (x_duration_s > 0):
             x_gain = (plot_width - 1) / (x_duration_s * time64.SECOND)
@@ -6000,12 +6142,20 @@ class WaveformWidget(QtWidgets.QWidget):
             center = (x1 + x0) // 2
         elif isinstance(center, float):
             raise ValueError(f'center is not int: {type(center)} {center}')
+        # Keep the center at the same fraction of the drawn view, which can
+        # differ slightly from x_range, see x_align.
+        v0, v1 = self._x_range_drawn()
+        if v1 <= v0:
+            v0, v1 = x0, x1
         center = int(center)
-        center = max(x0, min(center, x1))
-        f = (center - x0) / d_x
+        center = max(v0, min(center, v1))
+        f = (center - v0) / (v1 - v0)
         d_x *= _ZOOM_FACTOR ** -steps
         r = max(min(d_x, d_e), period_min)
-        z0, z1 = center - int(r * f), center + int(r * (1 - f))
+        # The drawn view is centered on x_range when not pinned.
+        zc = center + int(self._x_align_duration(int(r)) * (0.5 - f))
+        z0 = zc - int(r) // 2
+        z1 = z0 + int(r)
         if self.pin_left or z0 < e0:
             z0, z1 = e0, int(e0 + r)
         elif self.pin_right or z1 > e1:
