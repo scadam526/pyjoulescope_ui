@@ -290,6 +290,104 @@ class TestTriggerScanner(unittest.TestCase):
         np.testing.assert_allclose(np.diff(p), 250.0, atol=0.05)
         self.assertEqual(len(x) // 250, len(p))  # crossings at 62.5 + 250 * k
 
+    def test_average_ignores_narrow_spike(self):
+        x = np.zeros(1000, dtype=np.float32)
+        x[503:505] = 1.0  # a 2 sample spike
+        s = TriggerScanner()
+        s.detector.configure('rising', 0.5)
+        s.request(0, 999, 1000, now=0.0)
+        np.testing.assert_allclose([502.5], s.on_response(0, x))
+        s = TriggerScanner()
+        s.detector.configure('rising', 0.5)
+        s.average.incr = 100  # the spike averages to 0.02
+        s.request(0, 999, 1000, now=0.0)
+        self.assertEqual(0, len(s.on_response(0, x)))
+
+    def test_average_positions_in_samples(self):
+        x = np.zeros(1000, dtype=np.float32)
+        x[550:] = 1.0  # blocks of 100: 0.0 for block 4, 0.5 for block 5, 1.0 for block 6
+        s = TriggerScanner()
+        s.detector.configure('rising', 0.25)
+        s.average.incr = 100
+        s.request(0, 999, 1000, now=0.0)
+        # interpolated between block 4 (sample 400) and block 5 (sample 500)
+        np.testing.assert_allclose([450.0], s.on_response(0, x))
+
+    def test_average_reset_on_skip_ahead(self):
+        s = TriggerScanner()
+        s.average.incr = 10
+        s.request(0, 1000, 100, now=0.0)
+        s.on_response(900, np.ones(15, dtype=np.float32))  # partial block 91
+        self.assertEqual(5, s.average._count)
+        self.assertEqual((5900, 6000), s.request(5000, 6000, 100, now=1.0))  # evicted: restarts
+        self.assertEqual(0, s.average._count)
+        self.assertIsNone(s.average._sample_next)
+
+
+class TestBlockAverage(unittest.TestCase):
+
+    def test_average_increment(self):
+        self.assertEqual(101, trigger.average_increment(0.010, 1e6, 100))
+        self.assertEqual(0, trigger.average_increment(0.0001, 1e6, 100))  # ~1 sample per pixel
+        self.assertEqual(0, trigger.average_increment(0.010, 1e6, 1))
+        self.assertEqual(0, trigger.average_increment(0.0, 1e6, 100))
+
+    def test_disabled(self):
+        self.assertFalse(trigger.BlockAverage(1).enabled)
+        self.assertTrue(trigger.BlockAverage(2).enabled)
+
+    def test_blocks(self):
+        a = trigger.BlockAverage(4)
+        block_id, v = a.process(0, np.arange(12, dtype=np.float32))
+        self.assertEqual(0, block_id)
+        np.testing.assert_allclose([1.5, 5.5, 9.5], v)
+
+    def test_starts_on_grid(self):
+        a = trigger.BlockAverage(4)
+        block_id, v = a.process(2, np.arange(2, 12, dtype=np.float32))
+        self.assertEqual(1, block_id)  # skips the partial block 0
+        np.testing.assert_allclose([5.5, 9.5], v)
+
+    def test_start_beyond_short_block(self):
+        a = trigger.BlockAverage(10)
+        block_id, v = a.process(5, np.zeros(3, dtype=np.float32))
+        self.assertEqual(0, len(v))
+        block_id, v = a.process(8, np.arange(8, 20, dtype=np.float32))
+        self.assertEqual(1, block_id)
+        np.testing.assert_allclose([14.5], v)
+
+    def test_partial_across_calls(self):
+        a = trigger.BlockAverage(4)
+        x = np.arange(16, dtype=np.float32)
+        out = []
+        for k0, k1 in [(0, 3), (3, 5), (5, 6), (6, 16)]:
+            block_id, v = a.process(k0, x[k0:k1])
+            if len(v):
+                out.append((block_id, v))
+        self.assertEqual([0, 1], [b for b, _ in out])
+        np.testing.assert_allclose([1.5, 5.5, 9.5, 13.5], np.concatenate([v for _, v in out]))
+
+    def test_overlap_skipped(self):
+        a = trigger.BlockAverage(4)
+        a.process(0, np.arange(6, dtype=np.float32))
+        block_id, v = a.process(4, np.arange(4, 12, dtype=np.float32))
+        self.assertEqual(1, block_id)
+        np.testing.assert_allclose([5.5, 9.5], v)
+
+    def test_gap_discards_partial(self):
+        a = trigger.BlockAverage(4)
+        a.process(0, np.ones(6, dtype=np.float32))
+        block_id, v = a.process(10, np.zeros(10, dtype=np.float32))
+        self.assertEqual(3, block_id)
+        np.testing.assert_allclose([0.0, 0.0], v)
+
+    def test_nan(self):
+        a = trigger.BlockAverage(4)
+        x = np.array([1, np.nan, 3, np.nan] + [np.nan] * 4, dtype=np.float32)
+        block_id, v = a.process(0, x)
+        self.assertEqual(2.0, v[0])
+        self.assertTrue(np.isnan(v[1]))
+
 
 if __name__ == '__main__':
     unittest.main()

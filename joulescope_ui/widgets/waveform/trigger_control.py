@@ -58,6 +58,16 @@ _TOOLTIP_LEVEL_CENTER = tooltip_format(
     N_('Center level'),
     N_('Set the trigger level to the middle of the displayed trigger source signal.'))
 
+_TOOLTIP_DISPLAY_ONLY = tooltip_format(
+    N_('Displayed trace only'),
+    P_([
+        N_('Trigger only on edges that the displayed trace shows.'),
+        N_('When zoomed out, each pixel shows the average of many samples, '
+           'so short pulses may not appear in the trace.  When this is off, '
+           'these pulses still trigger.  When this is on, the trigger uses the same '
+           'averages as the trace and ignores these pulses.'),
+    ]))
+
 _TOOLTIP_HOLDOFF = tooltip_format(
     N_('Holdoff'),
     N_('Ignore triggers for this duration after each trigger. '
@@ -123,12 +133,19 @@ class TriggerSettingsPopup(QtWidgets.QFrame):
         self._hysteresis = self._combo('trigger_hysteresis')
         self._layout.addRow(N_('Noise reject'), self._hysteresis)
 
+        self._display_only = QtWidgets.QCheckBox(N_('Displayed trace only'), self)
+        self._display_only.setObjectName('trigger_display_only')
+        self._display_only.setToolTip(_TOOLTIP_DISPLAY_ONLY)
+        self._display_only.toggled.connect(self._on_display_only)
+        self._layout.addRow('', self._display_only)
+
         self._subscribe('trigger_source', self._on_source)
         self._subscribe('trigger_edge', self._on_edge)
         self._subscribe('trigger_level', self._on_level)
         self._subscribe('trigger_position', self._on_position_setting)
         self._subscribe('trigger_holdoff', self._on_holdoff_setting)
         self._subscribe('trigger_hysteresis', self._on_hysteresis)
+        self._subscribe('trigger_display_only', self._on_display_only_setting)
 
     def _setting_topic(self, name):
         return f'{self._topic}/settings/{name}'
@@ -226,6 +243,15 @@ class TriggerSettingsPopup(QtWidgets.QFrame):
 
     def _on_hysteresis(self, value):
         self._combo_set(self._hysteresis, value)
+
+    def _on_display_only_setting(self, value):
+        block = self._display_only.blockSignals(True)
+        self._display_only.setChecked(bool(value))
+        self._display_only.blockSignals(block)
+
+    @QtCore.Slot(bool)
+    def _on_display_only(self, checked):
+        self._pubsub.publish(self._setting_topic('trigger_display_only'), bool(checked))
 
 
 class TriggerControlWidget(QtWidgets.QWidget):

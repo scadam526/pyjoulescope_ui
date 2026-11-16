@@ -16,7 +16,9 @@
 
 The Waveform widget scans the raw samples of the trigger source signal
 from the stream buffer, in order, as they arrive.  EdgeTrigger finds
-the level crossings with hysteresis and holdoff.  TriggerScanner decides
+the level crossings with hysteresis and holdoff.  BlockAverage optionally
+averages the samples per plot pixel column first, so that the trigger
+only fires on edges that the displayed trace shows.  TriggerScanner decides
 which sample range to request next.  TriggerHistory keeps the recent
 trigger times so that the widget can display the newest trigger whose
 post-trigger window is fully available.
@@ -71,6 +73,24 @@ def si_parse(text, units=None):
 
 def is_digital(quantity):
     return quantity in DIGITAL_QUANTITIES
+
+
+def average_increment(duration_s, fs, width):
+    """Compute the samples per plot pixel column for BlockAverage.
+
+    :param duration_s: The view duration in seconds.
+    :param fs: The sample rate in Hz.
+    :param width: The plot width in pixels.
+    :return: The samples per pixel rounded to an integer, or 0 when the
+        view has fewer than 2 samples per pixel.  The plot then draws
+        individual samples, so the trigger uses every sample.
+    """
+    if width < 2 or duration_s <= 0 or fs <= 0:
+        return 0
+    spp = duration_s * fs / (width - 1)
+    if spp < 1.999:  # tolerate time64 rounding
+        return 0
+    return int(np.floor(spp + 0.5))
 
 
 def _schmitt(x, lo, hi, state0):
@@ -254,6 +274,116 @@ class EdgeTrigger:
         return np.array(accepted, dtype=np.float64)
 
 
+class BlockAverage:
+    """Average a sample stream over a fixed grid of sample blocks.
+
+    :param incr: The samples per block.  Block b contains the samples
+        b * incr to (b + 1) * incr - 1.  Values less than 2 disable
+        averaging.
+
+    The waveform plot summarizes each pixel column from consecutive
+    samples, and draws the average as the trace.  A short spike that
+    crosses the trigger level can vanish in this average.  Triggering on
+    the block averages, with the same samples per block as the plot,
+    only triggers on edges that the average trace shows.
+
+    Call process() with consecutive sample blocks.  A partial block
+    continues across calls.  The first block after reset() or a gap
+    starts on the next grid boundary, since a partial block average
+    differs from the displayed average.  NaN samples are excluded from
+    the average, and a block with only NaN samples averages to NaN.
+    """
+
+    def __init__(self, incr=0):
+        self._incr = 0
+        self.incr = incr
+
+    @property
+    def incr(self):
+        return self._incr
+
+    @incr.setter
+    def incr(self, value):
+        """Change the samples per block and reset."""
+        value = int(value)
+        self._incr = value if value >= 2 else 0
+        self.reset()
+
+    @property
+    def enabled(self):
+        return self._incr >= 2
+
+    def reset(self):
+        self._sample_next = None    # the next expected sample id
+        self._sum = 0.0             # the partial block sum of finite samples
+        self._count = 0             # the partial block finite sample count
+
+    def _accumulate(self, x):
+        finite = np.isfinite(x)
+        self._sum += float(np.sum(x, where=finite))
+        self._count += int(np.count_nonzero(finite))
+
+    def _pop(self):
+        v = self._sum / self._count if self._count else np.nan
+        self._sum, self._count = 0.0, 0
+        return v
+
+    def process(self, sample_id, samples):
+        """Process a block of samples.
+
+        :param sample_id: The sample id of samples[0].
+        :param samples: The 1-D sample values.
+        :return: (block_id, averages) for the blocks that these samples
+            complete, where block_id is the id of averages[0].  The
+            block ids are consecutive across calls without a gap.
+        """
+        incr = self._incr
+        if not incr:
+            raise RuntimeError('BlockAverage disabled')
+        samples = np.asarray(samples, dtype=np.float64)
+        sample_id = int(sample_id)
+        if self._sample_next is not None:
+            if sample_id < self._sample_next:  # overlap: skip processed samples
+                skip = self._sample_next - sample_id
+                samples = samples[skip:]
+                sample_id += skip
+            elif sample_id > self._sample_next:  # gap: discard the partial block
+                self.reset()
+        if self._sample_next is None:  # start on the grid
+            skip = (-sample_id) % incr
+            samples = samples[skip:]
+            sample_id += skip
+            self._sample_next = sample_id
+        empty = np.empty(0, dtype=np.float64)
+        n = len(samples)
+        if not n:
+            return sample_id // incr, empty
+        self._sample_next = sample_id + n
+        block_id, offset = divmod(sample_id, incr)
+        values = []
+        idx = 0
+        if offset:  # continue the partial block
+            idx = min(n, incr - offset)
+            self._accumulate(samples[:idx])
+            if offset + idx < incr:
+                return block_id + 1, empty
+            values.append(np.array([self._pop()]))
+        m = (n - idx) // incr
+        if m:
+            x = samples[idx:idx + m * incr].reshape(m, incr)
+            finite = np.isfinite(x)
+            s = np.sum(x, axis=1, where=finite)
+            c = np.count_nonzero(finite, axis=1)
+            with np.errstate(invalid='ignore', divide='ignore'):
+                values.append(np.where(c > 0, s / np.maximum(c, 1), np.nan))
+            idx += m * incr
+        if idx < n:
+            self._accumulate(samples[idx:])
+        if not values:
+            return block_id, empty
+        return block_id, np.concatenate(values)
+
+
 class TriggerHistory:
     """The recent accepted trigger times, in increasing order."""
 
@@ -299,6 +429,7 @@ class TriggerScanner:
 
     def __init__(self):
         self.detector = EdgeTrigger()
+        self.average = BlockAverage()
         self.history = TriggerHistory()
         self._sample_next = None
         self._pending = None         # the monotonic request time
@@ -319,6 +450,7 @@ class TriggerScanner:
             starts with a lookback from the newest sample on the next request.
         """
         self.detector.reset()
+        self.average.reset()
         self.history.clear()
         self._sample_next = None if start is None else int(start)
         self._pending = None
@@ -345,7 +477,7 @@ class TriggerScanner:
         k = self._sample_next
         if k is None or k < buf_start or (buf_end - k) > backlog_max:
             k = max(buf_start, buf_end - lookback)
-            self.detector.state_reset()
+            self.state_reset()
             self._sample_next = k
         if k > buf_end:
             return None
@@ -376,9 +508,21 @@ class TriggerScanner:
         if self.is_stale(sample_id):
             return None
         self._pending = None
-        positions = self.detector.process(sample_id, samples)
+        if self.average.enabled:
+            # Detect on the block averages, then convert the fractional
+            # block positions to sample ids.  Each block average is at
+            # its first sample, like the plot points.
+            block_id, values = self.average.process(sample_id, samples)
+            positions = self.detector.process(block_id, values) * self.average.incr
+        else:
+            positions = self.detector.process(sample_id, samples)
         self._sample_next = max(self._sample_next or 0, int(sample_id) + len(samples))
         return positions
+
+    def state_reset(self):
+        """Reset the edge and averaging state, such as for a sample gap."""
+        self.detector.state_reset()
+        self.average.reset()
 
     def on_response_invalid(self, sample_next=None):
         """Skip an unusable response, such as a summary.
@@ -386,7 +530,7 @@ class TriggerScanner:
         :param sample_next: The optional sample id to continue scanning.
         """
         self._pending = None
-        self.detector.state_reset()
+        self.state_reset()
         if sample_next is not None:
             self._sample_next = int(sample_next)
 
