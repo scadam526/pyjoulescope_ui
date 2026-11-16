@@ -812,7 +812,6 @@ class WaveformWidget(QtWidgets.QWidget):
         self._trigger_frame_drawn = None  # ([x0, x1], trigger time) of the displayed frame
         self._trigger_config = None       # the applied detector configuration
         self._trigger_arm_pending = False  # single mode: arm at the newest sample
-        self._trigger_mode_prev = None
         self._trigger_drag = {}           # in-progress mouse values: level, position
 
         self._fps = {
@@ -1829,7 +1828,6 @@ class WaveformWidget(QtWidgets.QWidget):
         return None
 
     def on_setting_trigger_mode(self, value):
-        prev, self._trigger_mode_prev = self._trigger_mode_prev, value
         if value == 'off':
             self._trigger_status = 'off'
             self._trigger_scanner.reset()
@@ -1837,15 +1835,35 @@ class WaveformWidget(QtWidgets.QWidget):
             self._trigger_shown = None
             self._trigger_epoch = None
             self._trigger_epoch_last = None
-            if prev not in (None, 'off') and getattr(self, 'pubsub', None) is not None and self._is_streaming():
-                # follow the newest data with the triggered view duration
-                self.pin_left = False
-                self.pin_right = True
+            # The pins are unchanged.  The trigger kept pin right, so the
+            # view continues to follow the newest data, unless the pins
+            # turned the trigger off.  See _trigger_pins_leave().
         else:
             if self._trigger_status == 'off':
                 self._trigger_status = 'ready'
             self._trigger_reset()
+            if self._trigger_active():
+                # the trigger looks at the newest data: pin right
+                self.pin_left = False
+                self.pin_right = True
         self._plot_data_invalidate()
+
+    def _trigger_pins_leave(self):
+        """Turn the trigger off since the pins left the newest data.
+
+        While streaming, an active trigger keeps pin right on and pin
+        left off.  Turning pin right off, or pin left on, by the pin
+        buttons, a zoom, or undo, moves the view away from the newest
+        data, so turn the trigger off.  When streaming stops, the pins
+        may change freely to inspect the held trigger, and the trigger
+        restores the pins when streaming resumes.
+
+        The caller only calls this for the pin changes that leave the
+        newest data, not for the changes that the trigger makes, which
+        may arrive one pin at a time.
+        """
+        if self._trigger_active():
+            self.trigger_mode = 'off'
 
     def on_setting_trigger_source(self):
         self._trigger_shown = None
@@ -6565,12 +6583,16 @@ class WaveformWidget(QtWidgets.QWidget):
         if bool(value) and self._is_file_mode:
             self.pin_left = False  # file extents are fixed: pins remain unset
             return
+        if bool(value):
+            self._trigger_pins_leave()
         self._plot_data_invalidate()
 
     def on_setting_pin_right(self, value):
         if bool(value) and self._is_file_mode:
             self.pin_right = False  # file extents are fixed: pins remain unset
             return
+        if not bool(value):
+            self._trigger_pins_leave()
         self._plot_data_invalidate()
 
     def on_setting_show_min_max(self):

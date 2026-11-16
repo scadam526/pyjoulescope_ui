@@ -72,27 +72,29 @@ _TOOLTIP_X_AXIS_ZOOM_ALL = tooltip_format(
 
 _TOOLTIP_PIN_LEFT = tooltip_format(
     N_("Pin left"),
-    N_("""Pin the waveform display to the left side.
-    When enabled, the left side (oldest) data
-    always remains in view."""))
+    P_([
+        N_("""Pin the waveform display to the left side.
+        When enabled, the left side (oldest) data
+        always remains in view."""),
+        N_("Enabling pin left turns the trigger off."),
+    ]))
 
 _TOOLTIP_PIN_RIGHT = tooltip_format(
     N_("Pin right"),
-    N_("""Pin the waveform display to the right side.
-    When enabled, the right side (newest) data
-    always remains in view."""))
+    P_([
+        N_("""Pin the waveform display to the right side.
+        When enabled, the right side (newest) data
+        always remains in view."""),
+        N_("""The trigger enables pin right, since the trigger
+        displays the newest data.  Disabling pin right
+        turns the trigger off."""),
+    ]))
 
 _TOOLTIP_PIN_FILE_MODE = tooltip_format(
     N_("Pin"),
     N_("""Pin the waveform display to one side.
     Pins are not available when viewing a file,
     which has fixed extents."""))
-
-_TOOLTIP_PIN_TRIGGER = tooltip_format(
-    N_("Pin"),
-    N_("""Pin the waveform display to one side.
-    Pins are not available when the trigger is on,
-    since the trigger positions the display."""))
 
 _TOOLTIP_Y_AXIS_ZOOM_ALL = tooltip_format(
     N_("Y zoom all"),
@@ -174,7 +176,6 @@ class WaveformControlWidget(QtWidgets.QWidget):
         self._add_button('y_zoom_all', self._on_y_axis_zoom_all, _TOOLTIP_Y_AXIS_ZOOM_ALL)
 
         self._trigger = TriggerControlWidget(self)
-        self._trigger.mode_changed.connect(self._on_trigger_mode)
         self._layout.addWidget(self._trigger)
 
         self._show_min_max_label = QtWidgets.QLabel(self)
@@ -251,20 +252,15 @@ class WaveformControlWidget(QtWidgets.QWidget):
 
     def _on_signal_stream_enable(self, value):
         dt_holdover = self.pubsub.query(f'{self.topic}/settings/dt_holdover', default=False)
-        if value and dt_holdover:
-            # maintain Δt: keep the current view duration, follow the newest data
+        trigger_on = self.pubsub.query(f'{self.topic}/settings/trigger_mode', default='off') != 'off'
+        if value and (dt_holdover or trigger_on):
+            # maintain Δt or trigger: keep the current view duration, follow the newest data
             self._on_pin_left_click(False)
             self._on_pin_right_click(True)
         else:
+            # stop: unpin, which holds the view, including the last trigger
             self._on_pin_left_click(value)
             self._on_pin_right_click(value)
-
-    @QtCore.Slot(str)
-    def _on_trigger_mode(self, value):
-        enabled = value == 'off'
-        for b, tooltip in [(self._pin_left, _TOOLTIP_PIN_LEFT), (self._pin_right, _TOOLTIP_PIN_RIGHT)]:
-            b.setEnabled(enabled)
-            b.setToolTip(tooltip if enabled else _TOOLTIP_PIN_TRIGGER)
 
     def _on_min_max(self, value):
         block_signals_state = self._min_max_sel.blockSignals(True)

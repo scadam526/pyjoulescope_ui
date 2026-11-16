@@ -414,5 +414,142 @@ class TestWaveformTriggerMarkers(unittest.TestCase):
         self.assertEqual('absolute', previous['mode'])
 
 
+class TestWaveformTriggerPins(unittest.TestCase):
+    """The trigger keeps pin right, and leaving pin right turns the trigger off."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+
+    def setUp(self):
+        w = WaveformWidget(None)
+        w.source_filter = 'JsdrvStreamBuffer:001'
+        w.unique_id = 'WaveformWidget:test'
+        w._is_streaming = lambda: True
+        w.pubsub = _PubSub()
+        w.trigger_mode = 'auto'
+        w.pin_left = False
+        w.pin_right = True
+        self.widget = w
+
+    def tearDown(self):
+        self.widget.close()
+
+    def test_trigger_on_pins_right(self):
+        w = self.widget
+        w.trigger_mode = 'off'
+        w.pin_left, w.pin_right = True, True
+        w.trigger_mode = 'normal'
+        w.on_setting_trigger_mode('normal')
+        self.assertEqual((False, True), (w.pin_left, w.pin_right))
+
+    def test_trigger_on_when_stopped_keeps_pins(self):
+        w = self.widget
+        w._is_streaming = lambda: False
+        w.trigger_mode = 'off'
+        w.pin_left, w.pin_right = False, False
+        w.trigger_mode = 'auto'
+        w.on_setting_trigger_mode('auto')
+        self.assertEqual((False, False), (w.pin_left, w.pin_right))
+
+    def test_pin_right_off_turns_trigger_off(self):
+        w = self.widget
+        w.pin_right = False
+        w.on_setting_pin_right(False)
+        self.assertEqual('off', w.trigger_mode)
+
+    def test_pin_left_on_turns_trigger_off(self):
+        w = self.widget
+        w.pin_left = True
+        w.on_setting_pin_left(True)
+        self.assertEqual('off', w.trigger_mode)
+
+    def test_trigger_pin_changes_keep_trigger(self):
+        # the trigger sets the pins one at a time
+        w = self.widget
+        w.on_setting_pin_left(False)
+        w.on_setting_pin_right(True)
+        self.assertEqual('auto', w.trigger_mode)
+
+    def test_pins_free_when_stopped(self):
+        # inspect the held trigger: the trigger resumes with streaming
+        w = self.widget
+        w._is_streaming = lambda: False
+        w.pin_right = False
+        w.on_setting_pin_right(False)
+        w.pin_left = True
+        w.on_setting_pin_left(True)
+        self.assertEqual('auto', w.trigger_mode)
+
+    def test_zoom_to_region_turns_trigger_off(self):
+        w = self.widget
+        w.dt_holdover = False
+        w.x_extent = [_T0, _T0 + 1000 * _MS]
+        w.x_range = [_T0 + 990 * _MS, _T0 + 1000 * _MS]
+        w.on_action_x_zoom_to([_T0 + 500 * _MS, _T0 + 510 * _MS])
+        self.assertFalse(w.pin_right)
+        w.on_setting_pin_right(False)  # the publish calls this when registered
+        self.assertEqual('off', w.trigger_mode)
+
+    def test_trigger_off_keeps_pins(self):
+        # pin left turned the trigger off: keep the pins that the user set
+        w = self.widget
+        w.pin_left = True
+        w.trigger_mode = 'off'
+        w.on_setting_trigger_mode('off')
+        self.assertEqual((True, True), (w.pin_left, w.pin_right))
+
+
+class _QueryPubSub(_PubSub):
+    """Record publishes and answer queries."""
+
+    def __init__(self, values):
+        super().__init__()
+        self.values = values
+
+    def query(self, topic, default=None):
+        return self.values.get(topic.split('/')[-1], default)
+
+
+class TestWaveformControlPins(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+
+    def _control(self, **values):
+        from joulescope_ui.widgets.waveform.waveform_control import WaveformControlWidget
+        c = WaveformControlWidget(None)
+        c.topic = 'registry/WaveformWidget:test'
+        c.pubsub = _QueryPubSub(values)
+        self.addCleanup(c.close)
+        return c
+
+    def _pins(self, c):
+        pins = {t.split('/')[-1]: v for t, v in c.pubsub.published if t.endswith(('pin_left', 'pin_right'))}
+        return pins['pin_left'], pins['pin_right']
+
+    def test_stream_start_pins_both(self):
+        c = self._control(trigger_mode='off')
+        c._on_signal_stream_enable(True)
+        self.assertEqual((True, True), self._pins(c))
+
+    def test_stream_start_with_trigger_pins_right(self):
+        c = self._control(trigger_mode='auto')
+        c._on_signal_stream_enable(True)
+        self.assertEqual((False, True), self._pins(c))
+
+    def test_stream_stop_unpins(self):
+        c = self._control(trigger_mode='auto')
+        c._on_signal_stream_enable(False)
+        self.assertEqual((False, False), self._pins(c))
+
+    def test_pins_enabled_with_trigger(self):
+        c = self._control(trigger_mode='auto')
+        c._trigger.mode_changed.emit('auto')
+        self.assertTrue(c._pin_left.isEnabled())
+        self.assertTrue(c._pin_right.isEnabled())
+
+
 if __name__ == '__main__':
     unittest.main()
