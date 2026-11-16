@@ -258,6 +258,49 @@ class TestWaveformTrigger(unittest.TestCase):
         self.assertEqual(20.0, w.trigger_position)
         self.assertEqual({}, w._trigger_drag)
 
+    def _level_drag(self, level):
+        w = self.widget
+        w._mouse_action = ['move.trigger.level']
+        w._mouse_action_previous = ['trigger', None]
+        w._trigger_drag = {'level': level}
+
+    def test_level_drag_holds_trigger(self):
+        w = self.widget
+        w.trigger_level = 0.5
+        s = w._trigger_scanner
+        w._trigger_scan()
+        x = np.zeros(2001, dtype=np.float32)
+        x[1201:] = 1.0
+        w.on_callback_response(None, self._response(0, x))
+        self.assertEqual(1, len(s.history))
+        self._level_drag(0.25)
+        w._trigger_scan()
+        self.assertEqual(1, len(s.history))  # the trigger search continues
+        self.assertEqual(0.5, s.detector.level)
+        self.assertEqual(0.25, w._trigger_level())  # the marker follows the drag
+        w._mouse_action_end()
+        self.assertEqual(0.25, w.trigger_level)
+        w._trigger_scan()
+        self.assertEqual(0.25, s.detector.level)  # applied on release
+        self.assertEqual(0, len(s.history))
+
+    def test_level_drag_holds_single_capture(self):
+        w = self.widget
+        w.trigger_mode = 'single'
+        w.trigger_level = 0.5
+        w._trigger_scan()
+        self._history([990])
+        self.assertEqual([_T0 + 985 * _MS, _T0 + 995 * _MS], w._compute_x_range())
+        self.assertEqual('stop', w._trigger_status)
+        self._level_drag(0.25)
+        w._trigger_scan()
+        self.assertEqual([_T0 + 985 * _MS, _T0 + 995 * _MS], w._compute_x_range())
+        self.assertEqual('stop', w._trigger_status)
+        self.assertEqual(_T0 + 990 * _MS, w._trigger_shown)
+        w._mouse_action_end()
+        w._trigger_scan()  # the new level re-arms single mode
+        self.assertEqual('ready', w._trigger_status)
+
     def test_digital_level(self):
         w = self.widget
         w.trigger_source = '0'

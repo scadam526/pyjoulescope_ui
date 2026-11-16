@@ -1512,11 +1512,18 @@ class WaveformWidget(QtWidgets.QWidget):
             changes = {'mode': 'absolute'}
         self._x_marker_update_publish(m, changes)
 
-    def _trigger_level(self):
-        """The effective trigger level, including an in-progress drag."""
+    def _trigger_level(self, drag=True):
+        """The trigger level.
+
+        :param drag: True for the level including an in-progress drag,
+            which the level marker displays.  False for the committed
+            level, which the trigger uses until the drag ends.
+        """
         if trigger_mod.is_digital(self.trigger_source):
             return trigger_mod.DIGITAL_LEVEL
-        level = self._trigger_drag.get('level', self.trigger_level)
+        level = self.trigger_level
+        if drag:
+            level = self._trigger_drag.get('level', level)
         try:
             level = float(level)
         except (TypeError, ValueError):
@@ -1575,10 +1582,12 @@ class WaveformWidget(QtWidgets.QWidget):
     def _trigger_configure(self, signal_id, signal):
         """Apply the trigger settings to the detector.
 
-        A configuration change restarts the trigger search.
+        A configuration change restarts the trigger search.  A level drag
+        keeps the committed level, so the display holds the triggered
+        trace until the drag ends.
         """
         plot = self._trigger_plot()
-        level = self._trigger_level()
+        level = self._trigger_level(drag=False)
         fs = float(signal['sample_rate'])
         try:
             holdoff = max(0.0, float(self.trigger_holdoff)) * fs
