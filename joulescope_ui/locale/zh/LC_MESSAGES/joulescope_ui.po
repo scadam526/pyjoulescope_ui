@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT 1.1.2\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-04 09:33-0500\n"
+"POT-Creation-Date: 2026-11-16 15:25-0500\n"
 "PO-Revision-Date: 2024-04-04 14:45-0400\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: zh <LL@li.org>\n"
@@ -52,7 +52,7 @@ msgid ""
 "must prevent excessive backwards current."
 msgstr "JS110 可断开 IN+ 至 OUT+ 的电流，但系统设置必须防止过大的反向电流。"
 
-#: app.py:61 widgets/device_control/js220_ctrl_widget.py:51
+#: app.py:61 widgets/device_control/js220_ctrl_widget.py:52
 msgid "Fuse engaged indicator"
 msgstr "保险丝啮合指示器"
 
@@ -63,7 +63,7 @@ msgid ""
 "cleared."
 msgstr "当至少一个连接的仪器有保险丝啮合时，该指示灯变为激活状态。保险丝啮合的仪器会阻止电流流动，直到保险丝被清除。"
 
-#: app.py:66 widgets/device_control/js220_ctrl_widget.py:56
+#: app.py:66 widgets/device_control/js220_ctrl_widget.py:57
 msgid "Press to clear."
 msgstr "按下清除。"
 
@@ -305,7 +305,7 @@ msgstr "电子邮件"
 msgid "Description"
 msgstr "描述"
 
-#: error_window.py:112 widgets/waveform/waveform_widget.py:4283
+#: error_window.py:112 widgets/waveform/waveform_widget.py:4339
 msgid "Edit"
 msgstr "编辑"
 
@@ -317,8 +317,9 @@ msgstr "以 Markdown 格式查看"
 msgid "Abort"
 msgstr "终止"
 
-#: error_window.py:120 main.py:466 widgets/settings/settings_widget.py:539
-#: widgets/spectrum/spectrum_widget.py:1093
+#: error_window.py:120 main.py:468 widgets/efficiency/efficiency_widget.py:624
+#: widgets/settings/settings_widget.py:659
+#: widgets/spectrum/spectrum_widget.py:1064
 msgid "View"
 msgstr "查看"
 
@@ -338,11 +339,150 @@ msgstr "恢复到以前的配置"
 msgid "Revert to defaults"
 msgstr "恢复到默认值"
 
-#: error_window.py:283 main.py:464 main.py:514
+#: error_window.py:283 main.py:466 main.py:516
 #: widgets/js220_cal/js220_cal_widget.py:38
 #: widgets/js320_cal/js320_cal_widget.py:60
 msgid "Exit"
 msgstr "退出"
+
+#: event_analyzer.py:54
+msgid "Sleep current in A, or None for automatic"
+msgstr "睡眠电流（单位：A），或选择“无”以启用自动测量"
+
+#: event_analyzer.py:55
+msgid "Event start threshold above sleep in A, or None for automatic"
+msgstr "事件触发阈值（以 A 为单位，高于睡眠模式），或选择“无”以启用自动模式"
+
+#: event_analyzer.py:56
+msgid "Join events closer than this, in seconds"
+msgstr "参与距离更近的活动，只需几秒钟"
+
+#: event_analyzer.py:57
+msgid "Waveform match tolerance; smaller gives more event types"
+msgstr "波形匹配容差；数值越小，可识别的事件类型越多"
+
+#: event_analyzer.py:58
+msgid "Battery capacity in mAh for the battery-life estimate"
+msgstr "以毫安时 (mAh) 为单位的电池容量，用于估算电池续航时间"
+
+#: event_analyzer.py:59
+msgid "Event type templates file"
+msgstr "事件类型模板文件"
+
+#: event_analyzer.py:201 main.py:431
+msgid "Event Analyzer (alpha)"
+msgstr "事件分析仪 (alpha)"
+
+#: event_analyzer.py:206
+msgid ""
+"Find the wake-up events in a capture, group them into types and account for "
+"all charge. The report opens in your web browser. This feature is an alpha "
+"preview: please share your feedback."
+msgstr "在捕获数据中查找唤醒事件，将其按类型分组，并统计全部电荷。报告将在您的网页浏览器中打开。此功能处于 Alpha 预览阶段：请分享您的反馈。"
+
+#: event_analyzer.py:214
+msgid "JLS file"
+msgstr "JLS 文件"
+
+#: event_analyzer.py:215
+msgid "Output directory"
+msgstr "输出目录"
+
+#: event_analyzer.py:219
+msgid "Sleep current"
+msgstr "待机电流"
+
+#: event_analyzer.py:219 event_analyzer.py:220
+#: widgets/waveform/waveform_widget.py:602
+#: widgets/waveform/waveform_widget.py:3763
+#: widgets/waveform/waveform_widget.py:3929
+#: widgets/waveform/waveform_widget.py:4284
+msgid "Auto"
+msgstr "自动"
+
+#: event_analyzer.py:220
+msgid "Start threshold"
+msgstr "启动阈值"
+
+#: event_analyzer.py:221
+msgid "Merge gap"
+msgstr "合并间距"
+
+#: event_analyzer.py:222
+msgid "Match tolerance"
+msgstr "匹配公差"
+
+#: event_analyzer.py:223
+msgid "Battery capacity (mAh)"
+msgstr "电池容量 (mAh)"
+
+#: event_analyzer.py:223 event_analyzer.py:225
+msgid "None"
+msgstr "无"
+
+#: event_analyzer.py:224
+msgid "Templates file"
+msgstr "模板文件"
+
+#: event_analyzer.py:238
+msgid "Analyze"
+msgstr "分析"
+
+#: event_analyzer.py:255
+msgid "Browse..."
+msgstr "浏览..."
+
+#: event_analyzer.py:293
+msgid "Invalid value"
+msgstr "无效值"
+
+#: event_analyzer.py:295
+msgid "Values must be positive"
+msgstr "数值必须为正值"
+
+#: event_analyzer.py:310
+msgid "Select capture"
+msgstr "选择捕获"
+
+#: event_analyzer.py:317
+msgid "Select output directory"
+msgstr "选择输出目录"
+
+#: event_analyzer.py:325
+msgid "Select templates"
+msgstr "选择模板"
+
+#: event_analyzer.py:340 event_analyzer.py:368
+msgid "Event Analyzer"
+msgstr "事件分析仪"
+
+#: event_analyzer.py:346
+msgid "Select an existing JLS file."
+msgstr "选择一个现有的 JLS 文件。"
+
+#: event_analyzer.py:352
+msgid "The templates file does not exist."
+msgstr "模板文件不存在。"
+
+#: event_analyzer.py:369
+msgid "This directory already contains a report for this capture. Replace it?"
+msgstr "该目录中已包含此捕获数据的报告。是否要替换它？"
+
+#: event_analyzer.py:378
+msgid "Analyzing..."
+msgstr "正在分析..."
+
+#: event_analyzer.py:402
+msgid "Event analysis failed"
+msgstr "事件分析失败"
+
+#: event_analyzer.py:404
+msgid "Cancelled"
+msgstr "已取消"
+
+#: event_analyzer.py:409
+msgid "Cancelling..."
+msgstr "正在取消..."
 
 #: exporter.py:52 widgets/signal_record/signal_record_config_widget.py:148
 #: widgets/statistics_record/statistics_record_config_widget.py:111
@@ -359,13 +499,14 @@ msgstr "文件名"
 msgid "Notes"
 msgstr "备注"
 
-#: exporter.py:89 widgets/signal_record/signal_record_config_widget.py:241
+#: exporter.py:89 widgets/efficiency/efficiency_widget.py:591
+#: widgets/signal_record/signal_record_config_widget.py:241
 #: widgets/signal_record/signal_record_config_widget.py:268
 #: widgets/statistics_record/statistics_record_config_widget.py:173
 msgid "Select save location"
 msgstr "选择保存位置"
 
-#: exporter.py:139 main.py:906
+#: exporter.py:139 main.py:908
 msgid "Export configuration"
 msgstr "导出配置"
 
@@ -383,7 +524,7 @@ msgid ""
 "exported data."
 msgstr "将数据导出到 JLS 文件。稍后可以打开该文件以显示导出的数据。"
 
-#: exporter.py:311
+#: exporter.py:311 widgets/efficiency/efficiency_widget.py:608
 msgid "Export failed"
 msgstr "导出失败"
 
@@ -533,204 +674,205 @@ msgstr "选择语言"
 msgid "The application will automatically close when you change the locale."
 msgstr "当您更改位置时，应用程序将自动关闭。"
 
-#: main.py:78 widgets/value/value_widget.py:788
+#: main.py:79 widgets/value/value_widget.py:788
 msgid "Multimeter"
 msgstr "万用表"
 
-#: main.py:79
+#: main.py:80
 msgid "Oscilloscope"
 msgstr "示波器"
 
-#: main.py:80 main.py:385 main.py:454 main.py:501
+#: main.py:81 main.py:386 main.py:456 main.py:503
 msgid "File"
 msgstr "文件"
 
-#: main.py:90
+#: main.py:91
 msgid "The UI status bar display mode"
 msgstr "用户界面状态栏显示模式"
 
-#: main.py:91
+#: main.py:92
 msgid ""
 "This setting controls the amount of detail shown on the status bar at the "
 "bottom of the UI window. You should usually leave this set to \"normal\" "
 "unless you want more detail concerning the UI internal operation."
 msgstr "此设置可控制用户界面窗口底部状态栏上显示的细节数量。通常应将其设置为 \"正常\"，除非您需要更多有关用户界面内部操作的细节。"
 
-#: main.py:96 safe_mode.py:43
+#: main.py:97 safe_mode.py:43
 msgid "Normal"
 msgstr "正常"
 
-#: main.py:97
+#: main.py:98
 msgid "Troubleshoot"
 msgstr "故障排除"
 
-#: main.py:103
+#: main.py:104
 msgid "Enable developer mode."
 msgstr "启用开发人员模式。"
 
-#: main.py:116
+#: main.py:117
 msgid "PubSub utilization"
 msgstr "PubSub 利用率"
 
-#: main.py:117
+#: main.py:118
 msgid ""
 "Display the number of actions processed by the publish-subscribe broker in "
 "each second."
 msgstr "显示发布-订阅代理每秒处理的操作数。"
 
-#: main.py:122
+#: main.py:123
 msgid "CPU utilization"
 msgstr "CPU 利用率"
 
-#: main.py:123
+#: main.py:124
 msgid ""
 "Display the CPU utilization by this application and the total CPU "
 "utilization by all applications. The value is displayed in percent."
 msgstr "显示此应用程序的 CPU 利用率和所有应用程序的总 CPU 利用率。该值以百分比显示。"
 
-#: main.py:129
+#: main.py:130
 msgid "Memory utilization"
 msgstr "内存利用率"
 
-#: main.py:130
+#: main.py:131
 msgid ""
 "Display the memory (RAM) utilization by this application and by all "
 "applications. The value is displayed in percent."
 msgstr "显示此应用程序和所有应用程序的内存（RAM）利用率。该值以百分比显示。"
 
-#: main.py:297
+#: main.py:298
 msgid "UI"
 msgstr "UI"
 
-#: main.py:417
+#: main.py:418
 msgid "Help"
 msgstr "帮助"
 
-#: main.py:418 widgets/hamburger/hamburger_widget.py:21
+#: main.py:419 widgets/hamburger/hamburger_widget.py:21
 msgid "Getting Started"
 msgstr "开始使用"
 
-#: main.py:419
+#: main.py:420
 msgid "Language"
 msgstr "语言"
 
-#: main.py:420
+#: main.py:421
 msgid "User's Guide"
 msgstr "用户指南"
 
-#: main.py:421 widgets/hamburger/hamburger_widget.py:22
+#: main.py:422 widgets/hamburger/hamburger_widget.py:22
 msgid "Changelog"
 msgstr "更新日志"
 
-#: main.py:422 widgets/help/help_widget.py:63
+#: main.py:423 widgets/help/help_widget.py:63
 msgid "Report Issue"
 msgstr "报告问题"
 
-#: main.py:423
+#: main.py:424
 msgid "View logs..."
 msgstr "查看日志..."
 
-#: main.py:424 widgets/hamburger/hamburger_widget.py:23
+#: main.py:425 widgets/hamburger/hamburger_widget.py:23
 msgid "Credits"
 msgstr "荣誉"
 
-#: main.py:425 widgets/hamburger/hamburger_widget.py:24
+#: main.py:426 widgets/hamburger/hamburger_widget.py:24
 msgid "About"
 msgstr "关于"
 
-#: main.py:429
+#: main.py:430
 msgid "Clear Accumulators"
 msgstr "透明蓄电池"
 
-#: main.py:432
+#: main.py:434
 msgid "Configure high accuracy time"
 msgstr "配置高精度时间"
 
 #: devices/serial/serial_port_dialog.py:145
-#: devices/serial/serial_port_dialog.py:159 main.py:455
+#: devices/serial/serial_port_dialog.py:159 main.py:457
 msgid "Open"
 msgstr "打开"
 
-#: main.py:456
+#: main.py:458
 msgid "Open recent"
 msgstr "近期开放"
 
-#: main.py:457 main.py:507 widgets/trigger/trigger_widget.py:467
+#: main.py:459 main.py:509 widgets/trigger/trigger_widget.py:467
 #: widgets/trigger/trigger_widget.py:480
 msgid "Config"
 msgstr "配置"
 
-#: main.py:458 main.py:508 widgets/waveform/waveform_widget.py:4204
+#: main.py:460 main.py:510 widgets/efficiency/efficiency_widget.py:635
+#: widgets/waveform/waveform_widget.py:4260
 msgid "Export"
 msgstr "出口"
 
-#: main.py:459 main.py:509 main.py:963
+#: main.py:461 main.py:511 main.py:965
 msgid "Import and restart"
 msgstr "导入并重启"
 
-#: main.py:460 main.py:510 main.py:966
+#: main.py:462 main.py:512 main.py:968
 msgid "Import and exit"
 msgstr "导入与退出"
 
-#: main.py:461 main.py:511 main.py:980
+#: main.py:463 main.py:513 main.py:982
 msgid "Clear and restart"
 msgstr "清除并重启"
 
-#: main.py:462 main.py:512 main.py:983
+#: main.py:464 main.py:514 main.py:985
 msgid "Clear and exit"
 msgstr "清晰且直观"
 
-#: main.py:467 widgets/settings/settings_widget.py:541
+#: main.py:469 widgets/settings/settings_widget.py:661
 msgid "Widgets"
 msgstr "小工具"
 
-#: main.py:468
+#: main.py:470
 msgid "Tools"
 msgstr "工具"
 
-#: main.py:502
+#: main.py:504
 msgid "Info"
 msgstr "信息"
 
-#: main.py:503 widget_tools.py:119 widgets/settings/settings_widget.py:31
-#: widgets/settings/settings_widget.py:574
+#: main.py:505 widget_tools.py:119 widgets/settings/settings_widget.py:32
+#: widgets/settings/settings_widget.py:694
 #: widgets/sidebar/sidebar_widget.py:42
 msgid "Settings"
 msgstr "设置"
 
-#: main.py:823
+#: main.py:825
 msgid "Manage"
 msgstr "管理"
 
-#: main.py:883
+#: main.py:885
 msgid "Select file to open"
 msgstr "选择要打开的文件"
 
-#: main.py:926
+#: main.py:928
 msgid "Configuration export failed."
 msgstr "配置导出失败。"
 
-#: main.py:940
+#: main.py:942
 msgid "Import configuration"
 msgstr "导入配置"
 
-#: main.py:959
+#: main.py:961
 msgid "The selected file is not a valid Joulescope UI configuration."
 msgstr "所选文件不是有效的 Joulescope UI 配置。"
 
-#: main.py:964
+#: main.py:966
 msgid "Replace the current configuration with the imported file and restart?"
 msgstr "是否要用导入的文件替换当前配置并重启？"
 
-#: main.py:967
+#: main.py:969
 msgid "Replace the current configuration with the imported file and exit?"
 msgstr "是否用导入的文件替换当前配置并退出？"
 
-#: main.py:981
+#: main.py:983
 msgid "Clear the configuration and restart?"
 msgstr "清除配置并重启？"
 
-#: main.py:984
+#: main.py:986
 msgid "Clear the configuration and exit?"
 msgstr "清除配置并退出？"
 
@@ -924,8 +1066,8 @@ msgstr "控制位置"
 
 #: widget_tools.py:94 widgets/serial_console/serial_console_widget.py:218
 #: widgets/waveform/waveform_source_widget.py:104
-#: widgets/waveform/waveform_widget.py:409
-#: widgets/waveform/waveform_widget.py:430
+#: widgets/waveform/waveform_widget.py:410
+#: widgets/waveform/waveform_widget.py:445
 msgid "off"
 msgstr "关闭"
 
@@ -949,11 +1091,11 @@ msgstr "ZIP 文件"
 msgid "Contents"
 msgstr "目录"
 
-#: devices/jsdrv/device.py:20
+#: devices/jsdrv/device.py:21
 msgid "Enable the streaming for the selected current range."
 msgstr "启用所选电流范围的流。"
 
-#: devices/jsdrv/device.py:21
+#: devices/jsdrv/device.py:22
 msgid ""
 "The current range is useful for understanding how your Joulescope autoranges"
 " to measure your current signal. It can also be helpful in separating target"
@@ -985,7 +1127,7 @@ msgstr "该设置允许您更改默认值，以更好地反映您使用 JS110 �
 #: devices/jsdrv/js220.py:106 devices/jsdrv/js220.py:136
 #: devices/jsdrv/js320.py:102 devices/jsdrv/js320.py:132
 #: devices/serial/serial_device.py:45 devices/serial/serial_device.py:69
-#: widgets/device_control/js220_ctrl_widget.py:36
+#: widgets/device_control/js220_ctrl_widget.py:37
 msgid "Device information"
 msgstr "设备信息"
 
@@ -1047,7 +1189,7 @@ msgid ""
 msgstr "启用时，电流在电流端子之间流动。禁用时，电流不会在电流端之间流动。在常见的系统设置中，这会抑制目标电源，可用于对目标设备进行电源循环复位。"
 
 #: devices/jsdrv/js110.py:147 devices/jsdrv/js220.py:210
-#: devices/jsdrv/js320.py:205 widgets/waveform/waveform_widget.py:119
+#: devices/jsdrv/js320.py:205 widgets/waveform/waveform_widget.py:120
 msgid "Current range"
 msgstr "电流范围"
 
@@ -1182,7 +1324,7 @@ msgstr "用于确定平均值的电流范围窗口后的采样数目。对于所
 
 #: devices/jsdrv/js110.py:269 devices/jsdrv/js220.py:435
 #: devices/jsdrv/js320.py:415 widgets/device_control/fuse.py:103
-#: widgets/waveform/waveform_widget.py:114
+#: widgets/waveform/waveform_widget.py:115
 msgid "Current"
 msgstr "电流"
 
@@ -1192,7 +1334,7 @@ msgid "Enable the current signal streaming."
 msgstr "启用电流信号流。"
 
 #: devices/jsdrv/js110.py:278 devices/jsdrv/js220.py:444
-#: devices/jsdrv/js320.py:424 widgets/waveform/waveform_widget.py:115
+#: devices/jsdrv/js320.py:424 widgets/waveform/waveform_widget.py:116
 msgid "Voltage"
 msgstr "电压"
 
@@ -1202,7 +1344,7 @@ msgid "Enable the voltage signal streaming."
 msgstr "启用电压信号流。"
 
 #: devices/jsdrv/js110.py:287 devices/jsdrv/js220.py:453
-#: devices/jsdrv/js320.py:433 widgets/waveform/waveform_widget.py:116
+#: devices/jsdrv/js320.py:433 widgets/waveform/waveform_widget.py:117
 msgid "Power"
 msgstr "功率"
 
@@ -1463,7 +1605,7 @@ msgid "Enable the general purpose input 3 signal streaming."
 msgstr "启用通用输入 3 信号流。"
 
 #: devices/jsdrv/js220.py:512 devices/jsdrv/js320.py:492
-#: widgets/waveform/waveform_widget.py:133
+#: widgets/waveform/waveform_widget.py:134
 msgid "Trigger input"
 msgstr "触发输入"
 
@@ -1538,11 +1680,11 @@ msgstr "配置通用输入和输出的参考电压。"
 #: devices/jsdrv/jsdrv_stream_buffer.py:93
 #: devices/jsdrv/jsdrv_stream_buffer.py:107
 #: devices/serial/serial_port_dialog.py:46 plugins/selector.py:58
-#: widgets/settings/settings_widget.py:85
-#: widgets/settings/settings_widget.py:266
-#: widgets/settings/settings_widget.py:364
-#: widgets/settings/settings_widget.py:431
-#: widgets/waveform/waveform_widget.py:3768
+#: widgets/settings/settings_widget.py:142
+#: widgets/settings/settings_widget.py:334
+#: widgets/settings/settings_widget.py:441
+#: widgets/settings/settings_widget.py:515
+#: widgets/waveform/waveform_widget.py:3820
 msgid "Name"
 msgstr "名称"
 
@@ -1636,7 +1778,7 @@ msgid "Auto-open"
 msgstr "自动打开"
 
 #: devices/serial/serial_port_dialog.py:88
-#: widgets/waveform/waveform_widget.py:3823
+#: widgets/waveform/waveform_widget.py:3875
 msgid "Add"
 msgstr "添加"
 
@@ -1645,9 +1787,9 @@ msgid "Closed"
 msgstr "关闭"
 
 #: devices/serial/serial_port_dialog.py:163
-#: widgets/waveform/waveform_widget.py:4276
-#: widgets/waveform/waveform_widget.py:4304
-#: widgets/waveform/waveform_widget.py:4348
+#: widgets/waveform/waveform_widget.py:4332
+#: widgets/waveform/waveform_widget.py:4360
+#: widgets/waveform/waveform_widget.py:4404
 msgid "Remove"
 msgstr "删除"
 
@@ -1742,7 +1884,7 @@ msgstr "概率密度分布"
 
 #: range_tools/histogram.py:44 range_tools/max_window.py:109
 #: widgets/spectrum/spectrum_control.py:36
-#: widgets/spectrum/spectrum_widget.py:1105
+#: widgets/spectrum/spectrum_widget.py:1076
 #: widgets/trigger/trigger_widget.py:220
 msgid "Signal"
 msgstr "信号"
@@ -1877,13 +2019,13 @@ msgstr "时钟"
 msgid "The time zone."
 msgstr "时区。"
 
-#: widgets/clock/clock_widget.py:35 widgets/waveform/waveform_widget.py:442
-#: widgets/waveform/waveform_widget.py:3593
+#: widgets/clock/clock_widget.py:35 widgets/waveform/waveform_widget.py:457
+#: widgets/waveform/waveform_widget.py:3642
 msgid "Local"
 msgstr "本地"
 
-#: widgets/clock/clock_widget.py:36 widgets/waveform/waveform_widget.py:441
-#: widgets/waveform/waveform_widget.py:3590
+#: widgets/clock/clock_widget.py:36 widgets/waveform/waveform_widget.py:456
+#: widgets/waveform/waveform_widget.py:3639
 msgid "UTC"
 msgstr "UTC"
 
@@ -2045,99 +2187,440 @@ msgstr "时间"
 msgid "Fuse"
 msgstr "保险丝"
 
-#: widgets/device_control/js220_ctrl_widget.py:31
+#: widgets/device_control/js220_ctrl_widget.py:32
 msgid "Device documentation"
 msgstr "设备文档"
 
-#: widgets/device_control/js220_ctrl_widget.py:32
+#: widgets/device_control/js220_ctrl_widget.py:33
 msgid "Click to display the device documentation PDF."
 msgstr "单击显示设备文档 PDF。"
 
-#: widgets/device_control/js220_ctrl_widget.py:37
+#: widgets/device_control/js220_ctrl_widget.py:38
 msgid "Click to display detailed information about the device."
 msgstr "单击可显示设备的详细信息。"
 
-#: widgets/device_control/js220_ctrl_widget.py:41
+#: widgets/device_control/js220_ctrl_widget.py:42
 msgid "Select this device as the default"
 msgstr "选择此设备作为默认设置"
 
-#: widgets/device_control/js220_ctrl_widget.py:43
+#: widgets/device_control/js220_ctrl_widget.py:44
 msgid ""
 "When selected, this device because the default. All widgets using the "
 "default device will use the data provided by this device."
 msgstr "选中后，该设备将作为默认设备。所有使用默认设备的 widget 都将使用该设备提供的数据。"
 
-#: widgets/device_control/js220_ctrl_widget.py:45
+#: widgets/device_control/js220_ctrl_widget.py:46
 msgid ""
 "When unselected, another device is the default. Widgets can still be "
 "configured to use data from this device."
 msgstr "未选择时，默认使用其他设备。小工具仍可配置为使用该设备的数据。"
 
-#: widgets/device_control/js220_ctrl_widget.py:53
+#: widgets/device_control/js220_ctrl_widget.py:54
 msgid ""
 "This indicator becomes active when this device has at least one engaged "
 "fuse. Engaged fuses prevent current flow until cleared."
 msgstr "当该设备至少有一个保险丝啮合时，该指示灯变为激活状态。啮合的保险丝会阻止电流流动，直到被清除。"
 
-#: widgets/device_control/js220_ctrl_widget.py:61
+#: widgets/device_control/js220_ctrl_widget.py:62
 msgid "Open and close the device"
 msgstr "打开和关闭设备"
 
-#: widgets/device_control/js220_ctrl_widget.py:63
+#: widgets/device_control/js220_ctrl_widget.py:64
 msgid ""
 "When closed, click to attempt to open the device. The icon will only change "
 "on a successful device open. Only one application can use a Joulescope "
 "device at a time."
 msgstr "关闭时，单击可尝试打开设备。只有在成功打开设备时，图标才会改变。一个 Joulescope 设备一次只能使用一个应用程序。"
 
-#: widgets/device_control/js220_ctrl_widget.py:66
+#: widgets/device_control/js220_ctrl_widget.py:67
 msgid ""
 "When open, click to close the device. This allows the device to be used in "
 "other programs."
 msgstr "打开时，单击可关闭设备。这样就可以在其他程序中使用该设备。"
 
-#: widgets/device_control/js220_ctrl_widget.py:72
-msgid "Reset to default settings"
-msgstr "重置为默认设置"
-
 #: widgets/device_control/js220_ctrl_widget.py:73
-msgid "Click this button to reset this device to the default settings"
-msgstr "单击此按钮可将此设备重置为默认设置"
+#: widgets/device_control/js220_ctrl_widget.py:654
+#: widgets/settings/settings_widget.py:566
+msgid "Reset to defaults"
+msgstr "重置为默认值"
 
-#: widgets/device_control/js220_ctrl_widget.py:77
+#: widgets/device_control/js220_ctrl_widget.py:74
+msgid ""
+"Click this button to close this device and reset its settings to the device "
+"defaults. Edit the device defaults in the Settings widget under Devices. "
+"Undo restores the previous settings."
+msgstr "点击此按钮可关闭该设备，并将设置重置为默认值。您可在“设备”下的“设置”小部件中编辑设备默认设置。“撤销”可恢复之前的设置。"
+
+#: widgets/device_control/js220_ctrl_widget.py:80
 msgid "Clear accumulators"
 msgstr "透明蓄电池"
 
-#: widgets/device_control/js220_ctrl_widget.py:78
+#: widgets/device_control/js220_ctrl_widget.py:81
 msgid ""
 "Click this button to clear the charge and energy accumulators. The "
 "\"Accrue\" feature of the value display widgets, including the multimeter, "
 "will be unaffected."
 msgstr "单击此按钮可清除电荷和能量累积器。数值显示部件（包括万用表）的 \"累积 \"功能将不受影响。"
 
-#: widgets/device_control/js220_ctrl_widget.py:84
-#: widgets/device_control/js220_ctrl_widget.py:666
+#: widgets/device_control/js220_ctrl_widget.py:87
+#: widgets/device_control/js220_ctrl_widget.py:669
 msgid "Calibrate"
 msgstr "校准"
 
-#: widgets/device_control/js220_ctrl_widget.py:85
+#: widgets/device_control/js220_ctrl_widget.py:88
 msgid ""
 "Click this button to recalibrate your Joulescope JS220. Recalibration is not"
 " required for normal operation. Performing calibration can improve accuracy "
 "by accounting for the existing temperature and aging effects."
 msgstr "点击此按钮重新校准 Joulescope JS220。正常操作不需要重新校准。进行校准可以通过考虑现有的温度和老化影响来提高精度。"
 
-#: widgets/device_control/js220_ctrl_widget.py:443
+#: widgets/device_control/js220_ctrl_widget.py:446
 msgid "GPO"
 msgstr "GPO"
 
-#: widgets/device_control/js220_ctrl_widget.py:651
-msgid "Reset to defaults"
-msgstr "重置为默认值"
-
-#: widgets/device_control/js220_ctrl_widget.py:657
+#: widgets/device_control/js220_ctrl_widget.py:660
 msgid "Clear accum"
 msgstr "清除累积"
+
+#: widgets/efficiency/efficiency_control.py:24
+#: widgets/spectrum/spectrum_control.py:30 widgets/value/value_widget.py:125
+msgid "Hold the display"
+msgstr "保持显示"
+
+#: widgets/efficiency/efficiency_control.py:25
+msgid "When selected, ignore new data so that the display stays frozen."
+msgstr "选中此选项后，将忽略新数据，使显示屏保持静止。"
+
+#: widgets/efficiency/efficiency_control.py:27
+#: widgets/efficiency/efficiency_control.py:53
+#: widgets/efficiency/efficiency_widget.py:638
+#: widgets/memory/memory_widget.py:238 widgets/spectrum/spectrum_control.py:33
+#: widgets/spectrum/spectrum_control.py:68
+#: widgets/spectrum/spectrum_widget.py:1080
+msgid "Clear"
+msgstr "清除"
+
+#: widgets/efficiency/efficiency_control.py:28
+msgid "Clear the cumulative efficiency, history, and efficiency curve."
+msgstr "清除累计效率、历史数据和效率曲线。"
+
+#: widgets/efficiency/efficiency_control.py:30
+#: widgets/efficiency/efficiency_control.py:54
+#: widgets/efficiency/efficiency_widget.py:40
+msgid "Input"
+msgstr "输入"
+
+#: widgets/efficiency/efficiency_control.py:31
+msgid ""
+"The instrument that measures the converter input. Connect its voltage inputs"
+" at the converter input pins."
+msgstr "用于测量转换器输入的仪器。将其电压输入端连接至转换器的输入引脚。"
+
+#: widgets/efficiency/efficiency_control.py:34
+#: widgets/efficiency/efficiency_control.py:57
+#: widgets/efficiency/efficiency_widget.py:40
+msgid "Output"
+msgstr "输出"
+
+#: widgets/efficiency/efficiency_control.py:35
+msgid ""
+"The instrument that measures the converter output. Connect its voltage "
+"inputs at the converter output pins."
+msgstr "用于测量转换器输出的仪器。将其电压输入端连接至转换器的输出引脚。"
+
+#: widgets/efficiency/efficiency_control.py:37
+msgid "Swap"
+msgstr "替换"
+
+#: widgets/efficiency/efficiency_control.py:37
+msgid "Swap the input and output instruments."
+msgstr "交换输入和输出仪表的位置。"
+
+#: widgets/efficiency/efficiency_control.py:39
+#: widgets/efficiency/efficiency_control.py:59
+msgid "Enable signals"
+msgstr "启用信号"
+
+#: widgets/efficiency/efficiency_control.py:40
+msgid "Enable the instrument signals that this widget needs."
+msgstr "请启用该小工具所需的仪器信号。"
+
+#: widgets/efficiency/efficiency_control.py:52
+#: widgets/efficiency/efficiency_widget.py:737
+#: widgets/spectrum/spectrum_control.py:67
+#: widgets/spectrum/spectrum_widget.py:1196 widgets/value/value_widget.py:257
+msgid "Hold"
+msgstr "保持"
+
+#: widgets/efficiency/efficiency_plot.py:215
+msgid "invalid"
+msgstr "无效"
+
+#: widgets/efficiency/efficiency_plot.py:288
+msgid "Waiting for steady load"
+msgstr "等待负载稳定"
+
+#: widgets/efficiency/efficiency_plot.py:348
+#, python-brace-format
+msgid "{0} windows, {1}"
+msgstr "{0} 个窗口，{1}"
+
+#: widgets/efficiency/efficiency_readout.py:62
+msgid "Input power"
+msgstr "输入功率"
+
+#: widgets/efficiency/efficiency_readout.py:63
+#: widgets/efficiency/efficiency_widget.py:101
+msgid "Output power"
+msgstr "输出功率"
+
+#: widgets/efficiency/efficiency_readout.py:64
+msgid "Power loss"
+msgstr "功耗"
+
+#: widgets/efficiency/efficiency_readout.py:65
+msgid "Cumulative efficiency"
+msgstr "累计效率"
+
+#: widgets/efficiency/efficiency_readout.py:69
+msgid "Input voltage"
+msgstr "输入电压"
+
+#: widgets/efficiency/efficiency_readout.py:70
+msgid "Input current"
+msgstr "输入电流"
+
+#: widgets/efficiency/efficiency_readout.py:71
+msgid "Output voltage"
+msgstr "输出电压"
+
+#: widgets/efficiency/efficiency_readout.py:72
+#: widgets/efficiency/efficiency_widget.py:101
+msgid "Output current"
+msgstr "输出电流"
+
+#: widgets/efficiency/efficiency_readout.py:132
+#: widgets/efficiency/efficiency_widget.py:167
+msgid "Efficiency"
+msgstr "效率"
+
+#: widgets/efficiency/efficiency_widget.py:43
+msgid "power"
+msgstr "功率"
+
+#: widgets/efficiency/efficiency_widget.py:43
+msgid "current"
+msgstr "电流"
+
+#: widgets/efficiency/efficiency_widget.py:43
+msgid "voltage"
+msgstr "电压"
+
+#: widgets/efficiency/efficiency_widget.py:55
+msgid "The input instrument."
+msgstr "输入仪器。"
+
+#: widgets/efficiency/efficiency_widget.py:61
+msgid "The output instrument."
+msgstr "输出仪器。"
+
+#: widgets/efficiency/efficiency_widget.py:67
+#: widgets/spectrum/spectrum_widget.py:81
+msgid "Hold the display."
+msgstr "锁定显示。"
+
+#: widgets/efficiency/efficiency_widget.py:73
+msgid "Show voltage and current"
+msgstr "显示电压和电流"
+
+#: widgets/efficiency/efficiency_widget.py:74
+msgid "Show the input and output voltage and current in the readout."
+msgstr "在显示屏上显示输入和输出电压及电流。"
+
+#: widgets/efficiency/efficiency_widget.py:80
+msgid "Show efficiency vs time"
+msgstr "显示效率随时间的变化"
+
+#: widgets/efficiency/efficiency_widget.py:85
+msgid "Efficiency vs time duration"
+msgstr "效率与持续时间的关系"
+
+#: widgets/efficiency/efficiency_widget.py:86
+msgid ""
+"The duration of the efficiency vs time history. Use the mouse wheel to zoom "
+"in to recent history."
+msgstr "效率随时间变化的历史曲线时长。使用鼠标滚轮可放大查看近期历史数据。"
+
+#: widgets/efficiency/efficiency_widget.py:94
+msgid "Show the efficiency curve"
+msgstr "显示效率曲线"
+
+#: widgets/efficiency/efficiency_widget.py:99
+msgid "Efficiency curve x-axis"
+msgstr "效率曲线的 x 轴"
+
+#: widgets/efficiency/efficiency_widget.py:105
+msgid "Efficiency curve x-axis scale"
+msgstr "效率曲线 x 轴刻度"
+
+#: widgets/efficiency/efficiency_widget.py:107
+#: widgets/waveform/waveform_widget.py:3786
+msgid "Logarithmic"
+msgstr "对数"
+
+#: widgets/efficiency/efficiency_widget.py:107
+#: widgets/waveform/waveform_widget.py:3781
+msgid "Linear"
+msgstr "线性"
+
+#: widgets/efficiency/efficiency_widget.py:111
+msgid "Efficiency curve bins per decade"
+msgstr "每十年为一个区间的效率曲线"
+
+#: widgets/efficiency/efficiency_widget.py:112
+msgid ""
+"The efficiency curve groups steady windows into logarithmically spaced load "
+"bins. More bins give finer load resolution but need more data."
+msgstr "效率曲线将稳态窗口分组到对数间隔的负载区间中。区间越多，负载分辨率越高，但需要更多的数据。"
+
+#: widgets/efficiency/efficiency_widget.py:120
+msgid "Efficiency curve window"
+msgstr "效率曲线窗口"
+
+#: widgets/efficiency/efficiency_widget.py:121
+msgid ""
+"The duration of each efficiency curve measurement. Statistics uses the "
+"statistics window. A shorter window captures load points from fast load "
+"sweeps, but includes more energy storage error from the converter "
+"capacitance."
+msgstr "每次效率曲线测量的持续时间。统计功能使用统计窗口。较短的窗口可捕获快速负载扫描中的负载点，但会包含更多来自转换器电容的能量存储误差。"
+
+#: widgets/efficiency/efficiency_widget.py:126
+msgid "Statistics"
+msgstr "统计数据"
+
+#: widgets/efficiency/efficiency_widget.py:131
+msgid "Steady load threshold"
+msgstr "稳态负载阈值"
+
+#: widgets/efficiency/efficiency_widget.py:132
+msgid ""
+"The efficiency curve only includes windows where the input and output power "
+"vary by less than this fraction of their mean within the window."
+msgstr "效率曲线仅包含那些输入功率与输出功率在该区间内的波动幅度小于其平均值该比例的区间。"
+
+#: widgets/efficiency/efficiency_widget.py:140
+msgid "Efficiency curve minimum windows"
+msgstr "效率曲线最小窗口"
+
+#: widgets/efficiency/efficiency_widget.py:141
+msgid "Draw bins with fewer windows faded and leave them off the line."
+msgstr "绘制时，让较少窗口的色块变淡，并将其移出线条之外。"
+
+#: widgets/efficiency/efficiency_widget.py:147
+msgid "Show the efficiency curve min and max"
+msgstr "显示效率曲线的最小值和最大值"
+
+#: widgets/efficiency/efficiency_widget.py:152
+msgid "Hold the efficiency curve"
+msgstr "保持效率曲线"
+
+#: widgets/efficiency/efficiency_widget.py:158
+msgid "The pane sizes."
+msgstr "面板尺寸。"
+
+#: widgets/efficiency/efficiency_widget.py:568
+msgid "input"
+msgstr "输入"
+
+#: widgets/efficiency/efficiency_widget.py:569
+msgid "output"
+msgstr "输出"
+
+#: widgets/efficiency/efficiency_widget.py:570
+msgid "window"
+msgstr "window"
+
+#: widgets/efficiency/efficiency_widget.py:582
+msgid "curve window"
+msgstr "曲线窗口"
+
+#: widgets/efficiency/efficiency_widget.py:583
+msgid "steady threshold"
+msgstr "稳态阈值"
+
+#: widgets/efficiency/efficiency_widget.py:623
+msgid "Swap input and output"
+msgstr "交换输入和输出"
+
+#: widgets/efficiency/efficiency_widget.py:636
+msgid "Efficiency vs time (CSV)"
+msgstr "效率与时间的关系（CSV）"
+
+#: widgets/efficiency/efficiency_widget.py:637
+msgid "Efficiency curve (CSV)"
+msgstr "效率曲线 (CSV)"
+
+#: widgets/efficiency/efficiency_widget.py:723
+#, python-brace-format
+msgid "{0} {1} is not connected"
+msgstr "{0} {1} 未连接"
+
+#: widgets/efficiency/efficiency_widget.py:726
+msgid "Select the input and output instruments"
+msgstr "选择输入和输出仪器"
+
+#: widgets/efficiency/efficiency_widget.py:729
+msgid "Select different input and output instruments"
+msgstr "选择不同的输入和输出仪器"
+
+#: widgets/efficiency/efficiency_widget.py:734
+#, python-brace-format
+msgid "Disabled: {0}"
+msgstr "已禁用：{0}"
+
+#: widgets/efficiency/efficiency_widget.py:739
+msgid "Curve hold"
+msgstr "曲线保持"
+
+#: widgets/efficiency/efficiency_widget.py:741
+#: widgets/spectrum/spectrum_widget.py:1198
+msgid "Paused"
+msgstr "暂停"
+
+#: widgets/efficiency/efficiency_widget.py:748
+#, python-brace-format
+msgid "No data from {0}"
+msgstr "{0} 没有数据"
+
+#: widgets/efficiency/efficiency_widget.py:751
+msgid "JS110 input includes its burden voltage"
+msgstr "JS110 的输入包含其负载电压"
+
+#: widgets/efficiency/efficiency_widget.py:754
+msgid "Efficiency above 100%: swap input and output?"
+msgstr "效率超过 100%：是输入和输出接反了吗？"
+
+#: widgets/efficiency/efficiency_widget.py:759
+#, python-brace-format
+msgid "{0} windows"
+msgstr "{0} 个窗口"
+
+#: widgets/efficiency/efficiency_widget.py:761
+#, python-brace-format
+msgid "{0} invalid"
+msgstr "{0} 无效"
+
+#: widgets/efficiency/efficiency_widget.py:763
+#, python-brace-format
+msgid "{0} unsteady"
+msgstr "{0} 非稳态"
+
+#: widgets/efficiency/efficiency_widget.py:766
+#: widgets/spectrum/spectrum_widget.py:1212
+#, python-brace-format
+msgid "overruns {0}"
+msgstr "超限 {0}"
 
 #: widgets/example/example_widget.py:22
 msgid "Example"
@@ -2304,7 +2787,7 @@ msgid "Save ACTIVE to:"
 msgstr "将“ACTIVE”保存至："
 
 #: widgets/js320_cal/js320_cal_widget.py:64
-#: widgets/waveform/waveform_widget.py:3842
+#: widgets/waveform/waveform_widget.py:3894
 msgid "Save"
 msgstr "保存"
 
@@ -2385,12 +2868,6 @@ msgstr "可用 RAM 大小"
 #: widgets/memory/memory_widget.py:221
 msgid "Used RAM size"
 msgstr "使用的 RAM 大小"
-
-#: widgets/memory/memory_widget.py:238 widgets/spectrum/spectrum_control.py:33
-#: widgets/spectrum/spectrum_control.py:82
-#: widgets/spectrum/spectrum_widget.py:1109
-msgid "Clear"
-msgstr "清除"
 
 #: widgets/memory/memory_widget.py:242
 msgid "Clear on play"
@@ -2496,45 +2973,80 @@ msgstr "注释波形"
 msgid "External Serial..."
 msgstr "外部串行..."
 
-#: widgets/settings/settings_widget.py:87 widgets/value/value_widget.py:797
+#: widgets/settings/settings_widget.py:144 widgets/value/value_widget.py:797
 msgid "Value"
 msgstr "值"
 
-#: widgets/settings/settings_widget.py:268
+#: widgets/settings/settings_widget.py:336
 msgid "Color"
 msgstr "颜色"
 
-#: widgets/settings/settings_widget.py:366
+#: widgets/settings/settings_widget.py:443
 msgid "Font"
 msgstr "字体"
 
-#: widgets/settings/settings_widget.py:433
+#: widgets/settings/settings_widget.py:517
 msgid "Define"
 msgstr "定义"
 
-#: widgets/settings/settings_widget.py:535
+#: widgets/settings/settings_widget.py:564
+msgid "Reset to factory default"
+msgstr "恢复出厂设置"
+
+#: widgets/settings/settings_widget.py:564
+msgid "Reset to default"
+msgstr "恢复默认设置"
+
+#: widgets/settings/settings_widget.py:566
+msgid "Reset to factory defaults"
+msgstr "恢复出厂设置"
+
+#: widgets/settings/settings_widget.py:568
+#, python-brace-format
+msgid "Reset {tab} to factory defaults"
+msgstr "按 {tab} 键恢复出厂设置"
+
+#: widgets/settings/settings_widget.py:569
+#, python-brace-format
+msgid "Reset {tab} to defaults"
+msgstr "重置 {tab} 至默认值"
+
+#: widgets/settings/settings_widget.py:655
 msgid "Common"
 msgstr "通用"
 
-#: widgets/settings/settings_widget.py:538
+#: widgets/settings/settings_widget.py:658
 msgid "View defaults"
 msgstr "查看默认设置"
 
-#: widgets/settings/settings_widget.py:540
+#: widgets/settings/settings_widget.py:660
 msgid "Devices"
 msgstr "设备"
 
-#: widgets/settings/settings_widget.py:575
+#: widgets/settings/settings_widget.py:695
 msgid "Colors"
 msgstr "颜色"
 
-#: widgets/settings/settings_widget.py:576
+#: widgets/settings/settings_widget.py:696
 msgid "Fonts"
 msgstr "字体"
 
-#: widgets/settings/settings_widget.py:577
+#: widgets/settings/settings_widget.py:697
 msgid "Defines"
 msgstr "定义"
+
+#: widgets/settings/settings_widget.py:715
+msgid "Reset"
+msgstr "重置"
+
+#: widgets/settings/settings_widget.py:791
+#, python-brace-format
+msgid "Reset all settings for {name}?"
+msgstr "是否要重置 {name} 的所有设置？"
+
+#: widgets/settings/settings_widget.py:792
+msgid "Undo restores them."
+msgstr "“撤销”可恢复这些操作。"
 
 #: widgets/settings/unique_strings_widget.py:50
 msgid "Available"
@@ -2631,10 +3143,6 @@ msgstr "记录信号"
 msgid "Configure signal recording"
 msgstr "配置信号记录"
 
-#: widgets/spectrum/spectrum_control.py:30 widgets/value/value_widget.py:125
-msgid "Hold the display"
-msgstr "保持显示"
-
 #: widgets/spectrum/spectrum_control.py:31
 msgid ""
 "When selected, ignore new data so that the spectrum and waterfall stay "
@@ -2707,11 +3215,6 @@ msgstr "平均值"
 msgid "The averaging mode for the average trace."
 msgstr "平均波形图的平均模式。"
 
-#: widgets/spectrum/spectrum_control.py:75
-#: widgets/spectrum/spectrum_widget.py:1225 widgets/value/value_widget.py:257
-msgid "Hold"
-msgstr "保持"
-
 #: widgets/spectrum/spectrum_plot.py:59
 msgid "Inferno"
 msgstr "Inferno"
@@ -2743,10 +3246,6 @@ msgstr "信号数据流的来源。"
 #: widgets/spectrum/spectrum_widget.py:75
 msgid "The signal to analyze."
 msgstr "待分析的信号。"
-
-#: widgets/spectrum/spectrum_widget.py:81
-msgid "Hold the display."
-msgstr "锁定显示。"
 
 #: widgets/spectrum/spectrum_widget.py:88
 msgid ""
@@ -2800,7 +3299,7 @@ msgid "PSD"
 msgstr "PSD"
 
 #: widgets/spectrum/spectrum_widget.py:138
-#: widgets/spectrum/spectrum_widget.py:1100
+#: widgets/spectrum/spectrum_widget.py:1071
 msgid "Y-axis units"
 msgstr "Y 轴单位"
 
@@ -2984,64 +3483,55 @@ msgstr "最大更新率（Hz）"
 msgid "Spectrum"
 msgstr "频谱"
 
-#: widgets/spectrum/spectrum_widget.py:1074
+#: widgets/spectrum/spectrum_widget.py:1045
 msgid "Add marker"
 msgstr "添加标记"
 
-#: widgets/spectrum/spectrum_widget.py:1077
+#: widgets/spectrum/spectrum_widget.py:1048
 msgid "Add marker at peak"
 msgstr "在峰值处添加标记"
 
-#: widgets/spectrum/spectrum_widget.py:1084
+#: widgets/spectrum/spectrum_widget.py:1055
 msgid "Remove marker"
 msgstr "删除标记"
 
-#: widgets/spectrum/spectrum_widget.py:1086
+#: widgets/spectrum/spectrum_widget.py:1057
 msgid "Clear markers"
 msgstr "清晰的标记"
 
-#: widgets/spectrum/spectrum_widget.py:1088
+#: widgets/spectrum/spectrum_widget.py:1059
 msgid "Traces"
 msgstr "波形图"
 
-#: widgets/spectrum/spectrum_widget.py:1094
+#: widgets/spectrum/spectrum_widget.py:1065
 msgid "Logarithmic frequency"
 msgstr "对数频率"
 
-#: widgets/spectrum/spectrum_widget.py:1095
+#: widgets/spectrum/spectrum_widget.py:1066
 msgid "Autoscale y-axis"
 msgstr "Y 轴自动缩放"
 
-#: widgets/spectrum/spectrum_widget.py:1096
+#: widgets/spectrum/spectrum_widget.py:1067
 msgid "Show FFT"
 msgstr "显示 FFT"
 
-#: widgets/spectrum/spectrum_widget.py:1097
+#: widgets/spectrum/spectrum_widget.py:1068
 msgid "Show waterfall"
 msgstr "显示瀑布图"
 
-#: widgets/spectrum/spectrum_widget.py:1223
+#: widgets/spectrum/spectrum_widget.py:1194
 msgid "No signal"
 msgstr "无信号"
 
-#: widgets/spectrum/spectrum_widget.py:1227
-msgid "Paused"
-msgstr "暂停"
-
-#: widgets/spectrum/spectrum_widget.py:1232
+#: widgets/spectrum/spectrum_widget.py:1203
 #, python-brace-format
 msgid "gaps {0}"
 msgstr "gaps {0}"
 
-#: widgets/spectrum/spectrum_widget.py:1238
+#: widgets/spectrum/spectrum_widget.py:1209
 #, python-brace-format
 msgid "waterfall {0}"
 msgstr "瀑布图 {0}"
-
-#: widgets/spectrum/spectrum_widget.py:1241
-#, python-brace-format
-msgid "overruns {0}"
-msgstr "超限 {0}"
 
 #: widgets/statistics_record/statistics_record_config_widget.py:86
 msgid "StatisticsRecordConfig"
@@ -3222,7 +3712,7 @@ msgstr "显示右侧的统计字段。"
 msgid "Show a leading + or - sign."
 msgstr "显示前导 + 或 - 符号。"
 
-#: widgets/value/value_widget.py:63 widgets/waveform/waveform_widget.py:493
+#: widgets/value/value_widget.py:63 widgets/waveform/waveform_widget.py:508
 msgid "The precision to display in digits."
 msgstr "以位数显示的精度。"
 
@@ -3313,7 +3803,7 @@ msgstr "不存在"
 msgid "Accrue"
 msgstr "增加"
 
-#: widgets/value/value_widget.py:601 widgets/waveform/waveform_widget.py:3756
+#: widgets/value/value_widget.py:601 widgets/waveform/waveform_widget.py:3808
 msgid "Preferred prefix"
 msgstr "首选前缀"
 
@@ -3375,7 +3865,7 @@ msgid "triangle left"
 msgstr "左三角形"
 
 #: widgets/waveform/text_annotation.py:67
-#: widgets/waveform/waveform_widget.py:3714
+#: widgets/waveform/waveform_widget.py:3766
 msgid "Manual"
 msgstr "手册"
 
@@ -3384,17 +3874,17 @@ msgid "Centered"
 msgstr "居中"
 
 #: widgets/waveform/text_annotation.py:101
-#: widgets/waveform/waveform_widget.py:3838
+#: widgets/waveform/waveform_widget.py:3890
 msgid "Text"
 msgstr "文本"
 
 #: widgets/waveform/text_annotation.py:109
-#: widgets/waveform/waveform_widget.py:4284
+#: widgets/waveform/waveform_widget.py:4340
 msgid "Show text"
 msgstr "显示文本"
 
 #: widgets/waveform/text_annotation.py:118
-#: widgets/waveform/waveform_widget.py:4296
+#: widgets/waveform/waveform_widget.py:4352
 msgid "Shape"
 msgstr "形状"
 
@@ -3578,426 +4068,435 @@ msgid ""
 "the Device Control widget."
 msgstr "\"默认 \"将使用默认源，该源通常使用设备控制 widget 进行配置。"
 
-#: widgets/waveform/waveform_widget.py:45
+#: widgets/waveform/waveform_widget.py:46
 msgid "Waveform"
 msgstr "波形"
 
-#: widgets/waveform/waveform_widget.py:46
+#: widgets/waveform/waveform_widget.py:47
 msgid "Copy text to clipboard"
 msgstr "将文本复制到剪贴板"
 
-#: widgets/waveform/waveform_widget.py:76
+#: widgets/waveform/waveform_widget.py:77
 msgid "X-axis pinned: click the pin buttons or press Shift+Space to unpin"
 msgstr "X 轴固定：点击固定按钮或按 Shift+空格键取消固定"
 
-#: widgets/waveform/waveform_widget.py:129
+#: widgets/waveform/waveform_widget.py:130
 msgid "General purpose input 0"
 msgstr "通用输入 0"
 
-#: widgets/waveform/waveform_widget.py:130
+#: widgets/waveform/waveform_widget.py:131
 msgid "General purpose input 1"
 msgstr "通用输入 1"
 
-#: widgets/waveform/waveform_widget.py:131
+#: widgets/waveform/waveform_widget.py:132
 msgid "General purpose input 2"
 msgstr "通用输入 2"
 
-#: widgets/waveform/waveform_widget.py:132
+#: widgets/waveform/waveform_widget.py:133
 msgid "General purpose input 3"
 msgstr "通用输入 3"
 
-#: widgets/waveform/waveform_widget.py:365
+#: widgets/waveform/waveform_widget.py:366
 msgid "The source filter string."
 msgstr "源滤波器串。"
 
-#: widgets/waveform/waveform_widget.py:376
+#: widgets/waveform/waveform_widget.py:377
 msgid "The trace width."
 msgstr "轨迹宽度。"
 
-#: widgets/waveform/waveform_widget.py:391
+#: widgets/waveform/waveform_widget.py:392
 msgid "The target frames per second."
 msgstr "目标帧/秒。"
 
-#: widgets/waveform/waveform_widget.py:393
+#: widgets/waveform/waveform_widget.py:394
 msgid "vsync"
 msgstr "vsync"
 
-#: widgets/waveform/waveform_widget.py:394
+#: widgets/waveform/waveform_widget.py:395
 msgid "20 Hz"
 msgstr "20 赫兹"
 
-#: widgets/waveform/waveform_widget.py:395
+#: widgets/waveform/waveform_widget.py:396
 msgid "10 Hz"
 msgstr "10 赫兹"
 
-#: widgets/waveform/waveform_widget.py:396
+#: widgets/waveform/waveform_widget.py:397
 msgid "5 Hz"
 msgstr "5 赫兹"
 
-#: widgets/waveform/waveform_widget.py:402
+#: widgets/waveform/waveform_widget.py:403
 msgid "The minimum interval between repaint in milliseconds."
 msgstr "以毫秒为单位的最小重绘间隔。"
 
-#: widgets/waveform/waveform_widget.py:407
+#: widgets/waveform/waveform_widget.py:408
 msgid "Show the minimum and maximum extents fill."
 msgstr "显示填充的最小和最大范围。"
 
-#: widgets/waveform/waveform_widget.py:410
+#: widgets/waveform/waveform_widget.py:411
 msgid "lines"
 msgstr "线路"
 
-#: widgets/waveform/waveform_widget.py:411
+#: widgets/waveform/waveform_widget.py:412
 msgid "fill 1"
 msgstr "填充 1"
 
-#: widgets/waveform/waveform_widget.py:412
+#: widgets/waveform/waveform_widget.py:413
 msgid "fill 2"
 msgstr "填充 2"
 
-#: widgets/waveform/waveform_widget.py:418
+#: widgets/waveform/waveform_widget.py:419
+msgid "Anti-alias the average trace when zoomed out."
+msgstr "缩小显示时，对平均波形曲线进行抗混叠处理。"
+
+#: widgets/waveform/waveform_widget.py:421
+msgid ""
+"When zoomed out, each pixel summarizes many samples. As the plot scrolls, a "
+"short pulse may fall into one pixel or be split between two, which makes the"
+" average trace flicker."
+msgstr ""
+"当缩小显示时，每个像素汇总了多个采样点。随着波形滚动，一个短脉冲可能会落入一个像素中，也可能被分割在两个像素之间，这会导致平均波形出现闪烁。"
+
+#: widgets/waveform/waveform_widget.py:424
+msgid ""
+"When enabled, the average trace is low-pass filtered to reduce this flicker."
+" The filter preserves the mean, but short pulses appear wider and lower. The"
+" min/max extents, statistics, and exported data are not filtered."
+msgstr ""
+"启用该功能后，平均波形曲线将经过低通滤波以减少这种闪烁。该滤波器保留了平均值，但短脉冲会显得更宽且电平更低。最小/最大范围、统计数据和导出数据均未经过滤波处理。"
+
+#: widgets/waveform/waveform_widget.py:433
 msgid "Show the frames per second."
 msgstr "显示每秒帧数。"
 
-#: widgets/waveform/waveform_widget.py:423
+#: widgets/waveform/waveform_widget.py:438
 msgid "Show the statistics on mouse hover."
 msgstr "鼠标悬停时显示统计数据。"
 
-#: widgets/waveform/waveform_widget.py:428
+#: widgets/waveform/waveform_widget.py:443
 msgid "The time format for mouse hover."
 msgstr "鼠标悬停的时间格式。"
 
-#: widgets/waveform/waveform_widget.py:431
+#: widgets/waveform/waveform_widget.py:446
 msgid "Relative to view"
 msgstr "相对于视图"
 
-#: widgets/waveform/waveform_widget.py:432
+#: widgets/waveform/waveform_widget.py:447
 msgid "Relative to buffer"
 msgstr "相对于缓冲器"
 
-#: widgets/waveform/waveform_widget.py:433
+#: widgets/waveform/waveform_widget.py:448
 msgid "Absolute time"
 msgstr "绝对时间"
 
-#: widgets/waveform/waveform_widget.py:439
+#: widgets/waveform/waveform_widget.py:454
 msgid "The time zone for absolute time display."
 msgstr "用于显示绝对时间的时间区。"
 
-#: widgets/waveform/waveform_widget.py:448
+#: widgets/waveform/waveform_widget.py:463
 msgid "The x-axis time mode."
 msgstr "x 轴时间模式。"
 
-#: widgets/waveform/waveform_widget.py:450
+#: widgets/waveform/waveform_widget.py:465
 msgid ""
 "Absolute displays the date and time of day for the configured time zone."
 msgstr "“绝对”显示根据配置时区设定的日期和时间。"
 
-#: widgets/waveform/waveform_widget.py:451
+#: widgets/waveform/waveform_widget.py:466
 msgid ""
 "Relative positive displays the elapsed time from the first available sample."
 msgstr "“相对正值”显示自首个可用采样点起经过的时间。"
 
-#: widgets/waveform/waveform_widget.py:452
+#: widgets/waveform/waveform_widget.py:467
 msgid ""
 "Relative negative displays 0 at the newest sample with negative elapsed time"
 " to the left."
 msgstr "相对负值显示：最新采样点显示为 0，左侧显示负的经过时间。"
 
-#: widgets/waveform/waveform_widget.py:455
-#: widgets/waveform/waveform_widget.py:553
-#: widgets/waveform/waveform_widget.py:3550
-#: widgets/waveform/waveform_widget.py:3577
+#: widgets/waveform/waveform_widget.py:470
+#: widgets/waveform/waveform_widget.py:568
+#: widgets/waveform/waveform_widget.py:3599
+#: widgets/waveform/waveform_widget.py:3626
 msgid "Absolute"
 msgstr "绝对值"
 
-#: widgets/waveform/waveform_widget.py:456
-#: widgets/waveform/waveform_widget.py:3580
+#: widgets/waveform/waveform_widget.py:471
+#: widgets/waveform/waveform_widget.py:3629
 msgid "Relative positive"
 msgstr "相对正极"
 
-#: widgets/waveform/waveform_widget.py:457
-#: widgets/waveform/waveform_widget.py:3583
+#: widgets/waveform/waveform_widget.py:472
+#: widgets/waveform/waveform_widget.py:3632
 msgid "Relative negative"
 msgstr "相对负极"
 
-#: widgets/waveform/waveform_widget.py:463
+#: widgets/waveform/waveform_widget.py:478
 msgid "Maintain the Δt view duration when streaming starts."
 msgstr "在开始流式传输时，保持 Δt 视图的持续时间不变。"
 
-#: widgets/waveform/waveform_widget.py:465
+#: widgets/waveform/waveform_widget.py:480
 msgid ""
 "When enabled, starting sample streaming pins the right side only and keeps "
 "the current Δt view duration. The plot starts mostly empty, and the traces "
 "grow as the data streams in."
 msgstr "启用后，开始采样会将右侧引脚置为高电平，并保持当前 Δt 视图时长。图表初始状态基本为空白，随着数据流的输入，波形曲线逐渐显现。"
 
-#: widgets/waveform/waveform_widget.py:468
+#: widgets/waveform/waveform_widget.py:483
 msgid ""
 "The view duration never shrinks to the available data, so stopping a short "
 "capture shows empty space beyond the traces."
 msgstr "显示时长不会随可用数据缩短，因此停止短时捕获时，波形曲线之外仍会显示空白区域。"
 
-#: widgets/waveform/waveform_widget.py:470
+#: widgets/waveform/waveform_widget.py:485
 msgid ""
 "When disabled, starting sample streaming pins both sides, and the view "
 "expands with the captured data."
 msgstr "禁用时，会启动两侧的采样流引脚，视图将随着捕获的数据而扩展。"
 
-#: widgets/waveform/waveform_widget.py:477
+#: widgets/waveform/waveform_widget.py:492
 msgid "Show the plot statistics on the right."
 msgstr "在右侧显示绘图统计数据。"
 
-#: widgets/waveform/waveform_widget.py:482
+#: widgets/waveform/waveform_widget.py:497
 msgid "Show frequency for dual markers and statistics."
 msgstr "显示频率，用于双重标记和统计。"
 
-#: widgets/waveform/waveform_widget.py:487
+#: widgets/waveform/waveform_widget.py:502
 msgid "The quantities to display by default."
 msgstr "默认显示的量。"
 
-#: widgets/waveform/waveform_widget.py:499
+#: widgets/waveform/waveform_widget.py:514
 msgid "Use OpenGL rendering."
 msgstr "使用 OpenGL 渲染。"
 
-#: widgets/waveform/waveform_widget.py:516
+#: widgets/waveform/waveform_widget.py:531
 msgid "Pin the left side (oldest) data so that it stays in view."
 msgstr "钉住左侧（最旧）数据，使其保持在视图中。"
 
-#: widgets/waveform/waveform_widget.py:521
+#: widgets/waveform/waveform_widget.py:536
 msgid "Pin the right side (newest) data so that it stays in view."
 msgstr "钉住右侧（最新）数据，使其保持在视图中。"
 
-#: widgets/waveform/waveform_widget.py:526
+#: widgets/waveform/waveform_widget.py:541
 msgid "The waveform state."
 msgstr "波形状态。"
 
-#: widgets/waveform/waveform_widget.py:532
+#: widgets/waveform/waveform_widget.py:547
 msgid "The annotations."
 msgstr "注释。"
 
-#: widgets/waveform/waveform_widget.py:539
+#: widgets/waveform/waveform_widget.py:554
 msgid "Show the summary waveform at top."
 msgstr "在顶部显示汇总波形。"
 
-#: widgets/waveform/waveform_widget.py:544
+#: widgets/waveform/waveform_widget.py:559
 msgid "The signal quantity to show in the summary."
 msgstr "要在摘要中显示的信号量。"
 
-#: widgets/waveform/waveform_widget.py:550
+#: widgets/waveform/waveform_widget.py:565
 msgid "X-axis annotation mode"
 msgstr "X 轴注释模式"
 
-#: widgets/waveform/waveform_widget.py:554
-#: widgets/waveform/waveform_widget.py:3555
+#: widgets/waveform/waveform_widget.py:569
+#: widgets/waveform/waveform_widget.py:3604
 msgid "Relative"
 msgstr "相对值"
 
-#: widgets/waveform/waveform_widget.py:560
+#: widgets/waveform/waveform_widget.py:575
 msgid "The available subsources."
 msgstr "可用的子源。"
 
-#: widgets/waveform/waveform_widget.py:566
+#: widgets/waveform/waveform_widget.py:581
 msgid "The selected subsources for each trace."
 msgstr "每个跟踪所选的子源。"
 
-#: widgets/waveform/waveform_widget.py:572
+#: widgets/waveform/waveform_widget.py:587
 msgid "The trace priority: highest int value on top, None is off."
 msgstr "跟踪优先级：最高 int 值在顶部，无则关闭。"
 
-#: widgets/waveform/waveform_widget.py:578
+#: widgets/waveform/waveform_widget.py:593
 msgid "The Δt display unit."
 msgstr "Δt 显示单位。"
 
-#: widgets/waveform/waveform_widget.py:580
+#: widgets/waveform/waveform_widget.py:595
 msgid "Conventional displays days:hours:minutes:seconds."
 msgstr "传统显示屏显示格式为：天:时:分:秒。"
 
-#: widgets/waveform/waveform_widget.py:581
+#: widgets/waveform/waveform_widget.py:596
 msgid "Auto displays a decimal value with the best fit unit."
 msgstr "设备会自动显示带最佳匹配单位的小数值。"
 
-#: widgets/waveform/waveform_widget.py:582
+#: widgets/waveform/waveform_widget.py:597
 msgid "Hours, Minutes, and Seconds display a decimal value in that unit."
 msgstr "小时、分钟和秒的数值均以该单位的小数形式显示。"
 
-#: widgets/waveform/waveform_widget.py:586
-#: widgets/waveform/waveform_widget.py:3872
+#: widgets/waveform/waveform_widget.py:601
+#: widgets/waveform/waveform_widget.py:3928
 msgid "Conventional"
 msgstr "传统"
 
-#: widgets/waveform/waveform_widget.py:587
-#: widgets/waveform/waveform_widget.py:3711
-#: widgets/waveform/waveform_widget.py:3873
-#: widgets/waveform/waveform_widget.py:4228
-msgid "Auto"
-msgstr "自动"
-
-#: widgets/waveform/waveform_widget.py:588
-#: widgets/waveform/waveform_widget.py:3874
+#: widgets/waveform/waveform_widget.py:603
+#: widgets/waveform/waveform_widget.py:3930
 msgid "Hours"
 msgstr "小时"
 
-#: widgets/waveform/waveform_widget.py:589
-#: widgets/waveform/waveform_widget.py:3875
+#: widgets/waveform/waveform_widget.py:604
+#: widgets/waveform/waveform_widget.py:3931
 msgid "Minutes"
 msgstr "分钟"
 
-#: widgets/waveform/waveform_widget.py:590
-#: widgets/waveform/waveform_widget.py:3876
+#: widgets/waveform/waveform_widget.py:605
+#: widgets/waveform/waveform_widget.py:3932
 msgid "Seconds"
 msgstr "秒"
 
-#: widgets/waveform/waveform_widget.py:3497
-#: widgets/waveform/waveform_widget.py:3850
+#: widgets/waveform/waveform_widget.py:3546
+#: widgets/waveform/waveform_widget.py:3906
 msgid "Save image to file"
 msgstr "将图像保存到文件"
 
-#: widgets/waveform/waveform_widget.py:3544
-#: widgets/waveform/waveform_widget.py:3653
+#: widgets/waveform/waveform_widget.py:3593
+#: widgets/waveform/waveform_widget.py:3705
 msgid "Single marker"
 msgstr "单标记"
 
-#: widgets/waveform/waveform_widget.py:3545
-#: widgets/waveform/waveform_widget.py:3654
+#: widgets/waveform/waveform_widget.py:3594
+#: widgets/waveform/waveform_widget.py:3706
 msgid "Dual markers"
 msgstr "双标记"
 
-#: widgets/waveform/waveform_widget.py:3547
-#: widgets/waveform/waveform_widget.py:3574
+#: widgets/waveform/waveform_widget.py:3596
+#: widgets/waveform/waveform_widget.py:3623
 msgid "Mode"
 msgstr "模式"
 
-#: widgets/waveform/waveform_widget.py:3560
-#: widgets/waveform/waveform_widget.py:3655
-#: widgets/waveform/waveform_widget.py:3826
-#: widgets/waveform/waveform_widget.py:3844
+#: widgets/waveform/waveform_widget.py:3609
+#: widgets/waveform/waveform_widget.py:3707
+#: widgets/waveform/waveform_widget.py:3878
+#: widgets/waveform/waveform_widget.py:3896
 msgid "Clear all"
 msgstr "全部清除"
 
-#: widgets/waveform/waveform_widget.py:3571
-#: widgets/waveform/waveform_widget.py:3704
-#: widgets/waveform/waveform_widget.py:3832
+#: widgets/waveform/waveform_widget.py:3620
+#: widgets/waveform/waveform_widget.py:3756
+#: widgets/waveform/waveform_widget.py:3884
 msgid "Annotations"
 msgstr "注释"
 
-#: widgets/waveform/waveform_widget.py:3587
+#: widgets/waveform/waveform_widget.py:3636
 msgid "Time Zone"
 msgstr "时区"
 
-#: widgets/waveform/waveform_widget.py:3597
-#: widgets/waveform/waveform_widget.py:3881
+#: widgets/waveform/waveform_widget.py:3646
+#: widgets/waveform/waveform_widget.py:3937
 msgid "Δt holdover"
 msgstr "Δt 保持时间"
 
-#: widgets/waveform/waveform_widget.py:3707
+#: widgets/waveform/waveform_widget.py:3759
 msgid "Range"
 msgstr "范围"
 
-#: widgets/waveform/waveform_widget.py:3717
+#: widgets/waveform/waveform_widget.py:3769
 msgid "Exact"
 msgstr "精确"
 
-#: widgets/waveform/waveform_widget.py:3726
+#: widgets/waveform/waveform_widget.py:3778
 msgid "Scale"
 msgstr "规模"
 
-#: widgets/waveform/waveform_widget.py:3729
-msgid "Linear"
-msgstr "线性"
-
-#: widgets/waveform/waveform_widget.py:3734
-msgid "Logarithmic"
-msgstr "对数"
-
-#: widgets/waveform/waveform_widget.py:3742
+#: widgets/waveform/waveform_widget.py:3794
 msgid "Logarithmic zero"
 msgstr "对数零"
 
-#: widgets/waveform/waveform_widget.py:3824
+#: widgets/waveform/waveform_widget.py:3876
 msgid "Hide all text"
 msgstr "隐藏所有文本"
 
-#: widgets/waveform/waveform_widget.py:3825
+#: widgets/waveform/waveform_widget.py:3877
 msgid "Show all text"
 msgstr "显示所有文本"
 
-#: widgets/waveform/waveform_widget.py:3833
+#: widgets/waveform/waveform_widget.py:3885
 msgid "Vertical"
 msgstr "垂直"
 
-#: widgets/waveform/waveform_widget.py:3836
+#: widgets/waveform/waveform_widget.py:3888
 msgid "Horizontal"
 msgstr "水平"
 
-#: widgets/waveform/waveform_widget.py:3847
+#: widgets/waveform/waveform_widget.py:3899
 msgid "Y-axis auto range"
 msgstr "Y 轴自动量程"
 
-#: widgets/waveform/waveform_widget.py:3851
+#: widgets/waveform/waveform_widget.py:3902
+msgid "Anti-aliasing"
+msgstr "抗混叠"
+
+#: widgets/waveform/waveform_widget.py:3907
 msgid "Copy image to clipboard"
 msgstr "将图像复制到剪贴板"
 
-#: widgets/waveform/waveform_widget.py:3852
+#: widgets/waveform/waveform_widget.py:3908
 msgid "Export visible data"
 msgstr "导出可见数据"
 
-#: widgets/waveform/waveform_widget.py:3853
+#: widgets/waveform/waveform_widget.py:3909
 msgid "Export visible data as CSV"
 msgstr "将可见数据导出为 CSV"
 
-#: widgets/waveform/waveform_widget.py:3854
+#: widgets/waveform/waveform_widget.py:3910
 msgid "Export all data"
 msgstr "导出所有数据"
 
-#: widgets/waveform/waveform_widget.py:3869
+#: widgets/waveform/waveform_widget.py:3925
 msgid "Unit"
 msgstr "单位"
 
-#: widgets/waveform/waveform_widget.py:4050
+#: widgets/waveform/waveform_widget.py:4106
 msgid "Export visible data to CSV file"
 msgstr "将可见数据导出到 CSV 文件"
 
-#: widgets/waveform/waveform_widget.py:4205
+#: widgets/waveform/waveform_widget.py:4261
 msgid "Analysis"
 msgstr "分析"
 
-#: widgets/waveform/waveform_widget.py:4213
+#: widgets/waveform/waveform_widget.py:4269
 msgid "Interval"
 msgstr "间隔"
 
-#: widgets/waveform/waveform_widget.py:4222
+#: widgets/waveform/waveform_widget.py:4278
 msgid "Zoom"
 msgstr "放大"
 
-#: widgets/waveform/waveform_widget.py:4226
+#: widgets/waveform/waveform_widget.py:4282
 msgid "Show statistics"
 msgstr "显示统计数据"
 
-#: widgets/waveform/waveform_widget.py:4231
+#: widgets/waveform/waveform_widget.py:4287
 msgid "Left"
 msgstr "左侧"
 
-#: widgets/waveform/waveform_widget.py:4234
+#: widgets/waveform/waveform_widget.py:4290
 msgid "Right"
 msgstr "正确"
 
-#: widgets/waveform/waveform_widget.py:4237
-#: widgets/waveform/waveform_widget.py:4244
+#: widgets/waveform/waveform_widget.py:4293
+#: widgets/waveform/waveform_widget.py:4300
 msgid "Off"
 msgstr "关闭"
 
-#: widgets/waveform/waveform_widget.py:4241
+#: widgets/waveform/waveform_widget.py:4297
 msgid "Show time"
 msgstr "显示时间"
 
-#: widgets/waveform/waveform_widget.py:4247
+#: widgets/waveform/waveform_widget.py:4303
 msgid "On"
 msgstr "在"
 
-#: widgets/waveform/waveform_widget.py:4251
+#: widgets/waveform/waveform_widget.py:4307
 msgid "Label"
 msgstr "标签"
 
-#: widgets/waveform/waveform_widget.py:4287
+#: widgets/waveform/waveform_widget.py:4343
 msgid "Y mode"
 msgstr "Y 模式"
 
@@ -4097,3 +4596,9 @@ msgstr "单位"
 #~ "Joulescope JS220 User's Guide for more connection examples."
 #~ msgstr ""
 #~ "对于 JS220，将电流端口连接到电源和被测设备之间。将电压端口连接到电源。有关更多连接示例，请参阅《Joulescope JS220 用户指南》。"
+
+#~ msgid "Reset to default settings"
+#~ msgstr "重置为默认设置"
+
+#~ msgid "Click this button to reset this device to the default settings"
+#~ msgstr "单击此按钮可将此设备重置为默认设置"

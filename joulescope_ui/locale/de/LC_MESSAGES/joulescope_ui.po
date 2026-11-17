@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT 1.1.2\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-04 09:33-0500\n"
+"POT-Creation-Date: 2026-11-16 15:25-0500\n"
 "PO-Revision-Date: 2024-04-04 14:45-0400\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -57,7 +57,7 @@ msgstr ""
 "Das JS110 unterbricht den Stromfluss von IN+ nach OUT+, aber der "
 "Versuchsaufbau muss einen übermäßigen Rückwärtsstrom verhindern."
 
-#: app.py:61 widgets/device_control/js220_ctrl_widget.py:51
+#: app.py:61 widgets/device_control/js220_ctrl_widget.py:52
 msgid "Fuse engaged indicator"
 msgstr "Anzeige für den Zustand der Sicherung"
 
@@ -71,7 +71,7 @@ msgstr ""
 "Strom ist unterbrochen, bis die Sicherung zurückgesetzt wird. Zum "
 "Zurücksetzen bitte drücken."
 
-#: app.py:66 widgets/device_control/js220_ctrl_widget.py:56
+#: app.py:66 widgets/device_control/js220_ctrl_widget.py:57
 msgid "Press to clear."
 msgstr "Drücken Sie zum Löschen."
 
@@ -354,7 +354,7 @@ msgstr "E-Mail"
 msgid "Description"
 msgstr "Beschreibung"
 
-#: error_window.py:112 widgets/waveform/waveform_widget.py:4283
+#: error_window.py:112 widgets/waveform/waveform_widget.py:4339
 msgid "Edit"
 msgstr "Bearbeiten"
 
@@ -366,8 +366,9 @@ msgstr "Als Markdown anzeigen"
 msgid "Abort"
 msgstr "Abbruch"
 
-#: error_window.py:120 main.py:466 widgets/settings/settings_widget.py:539
-#: widgets/spectrum/spectrum_widget.py:1093
+#: error_window.py:120 main.py:468 widgets/efficiency/efficiency_widget.py:624
+#: widgets/settings/settings_widget.py:659
+#: widgets/spectrum/spectrum_widget.py:1064
 msgid "View"
 msgstr "Siehe"
 
@@ -387,11 +388,160 @@ msgstr "Zur vorherigen Konfiguration zurückkehren"
 msgid "Revert to defaults"
 msgstr "Zu Standardeinstellungen zurückkehren"
 
-#: error_window.py:283 main.py:464 main.py:514
+#: error_window.py:283 main.py:466 main.py:516
 #: widgets/js220_cal/js220_cal_widget.py:38
 #: widgets/js320_cal/js320_cal_widget.py:60
 msgid "Exit"
 msgstr "Beenden"
+
+#: event_analyzer.py:54
+msgid "Sleep current in A, or None for automatic"
+msgstr "Ruhestrom in A oder „Keine Angabe“ für automatische Messung"
+
+#: event_analyzer.py:55
+msgid "Event start threshold above sleep in A, or None for automatic"
+msgstr ""
+"Schwellenwert für den Ereignisstart oberhalb des Ruhezustands in A oder "
+"„Keine“ für automatische Erfassung"
+
+#: event_analyzer.py:56
+msgid "Join events closer than this, in seconds"
+msgstr "Nehmen Sie in Sekundenschnelle an Veranstaltungen in Ihrer Nähe teil"
+
+#: event_analyzer.py:57
+msgid "Waveform match tolerance; smaller gives more event types"
+msgstr ""
+"Toleranz bei der Wellenformübereinstimmung; je kleiner, desto mehr "
+"Ereignistypen"
+
+#: event_analyzer.py:58
+msgid "Battery capacity in mAh for the battery-life estimate"
+msgstr "Akkukapazität in mAh zur Abschätzung der Akkulaufzeit"
+
+#: event_analyzer.py:59
+msgid "Event type templates file"
+msgstr "Datei mit Vorlagen für Ereignistypen"
+
+#: event_analyzer.py:201 main.py:431
+msgid "Event Analyzer (alpha)"
+msgstr "Event Analyzer (Alpha)"
+
+#: event_analyzer.py:206
+msgid ""
+"Find the wake-up events in a capture, group them into types and account for "
+"all charge. The report opens in your web browser. This feature is an alpha "
+"preview: please share your feedback."
+msgstr ""
+"Finden Sie die Wake-up-Ereignisse in einer Aufzeichnung, gruppieren Sie sie "
+"nach Typen und erfassen Sie die gesamte Ladung. Der Bericht wird in Ihrem "
+"Webbrowser geöffnet. Diese Funktion befindet sich in der Alpha-Vorschau: "
+"Bitte teilen Sie uns Ihr Feedback mit."
+
+#: event_analyzer.py:214
+msgid "JLS file"
+msgstr "JLS-Datei"
+
+#: event_analyzer.py:215
+msgid "Output directory"
+msgstr "Ausgabeverzeichnis"
+
+#: event_analyzer.py:219
+msgid "Sleep current"
+msgstr "Ruhestrom"
+
+#: event_analyzer.py:219 event_analyzer.py:220
+#: widgets/waveform/waveform_widget.py:602
+#: widgets/waveform/waveform_widget.py:3763
+#: widgets/waveform/waveform_widget.py:3929
+#: widgets/waveform/waveform_widget.py:4284
+msgid "Auto"
+msgstr "Auto"
+
+#: event_analyzer.py:220
+msgid "Start threshold"
+msgstr "Startschwelle"
+
+#: event_analyzer.py:221
+msgid "Merge gap"
+msgstr "Lücke schließen"
+
+#: event_analyzer.py:222
+msgid "Match tolerance"
+msgstr "Toleranz anpassen"
+
+#: event_analyzer.py:223
+msgid "Battery capacity (mAh)"
+msgstr "Batteriekapazität (mAh)"
+
+#: event_analyzer.py:223 event_analyzer.py:225
+msgid "None"
+msgstr "Keine"
+
+#: event_analyzer.py:224
+msgid "Templates file"
+msgstr "Vorlagendatei"
+
+#: event_analyzer.py:238
+msgid "Analyze"
+msgstr "Analysieren"
+
+#: event_analyzer.py:255
+msgid "Browse..."
+msgstr "Weiterlesen..."
+
+#: event_analyzer.py:293
+msgid "Invalid value"
+msgstr "Ungültiger Wert"
+
+#: event_analyzer.py:295
+msgid "Values must be positive"
+msgstr "Die Werte müssen positiv sein"
+
+#: event_analyzer.py:310
+msgid "Select capture"
+msgstr "Erfassung auswählen"
+
+#: event_analyzer.py:317
+msgid "Select output directory"
+msgstr "Ausgabeverzeichnis auswählen"
+
+#: event_analyzer.py:325
+msgid "Select templates"
+msgstr "Vorlagen auswählen"
+
+#: event_analyzer.py:340 event_analyzer.py:368
+msgid "Event Analyzer"
+msgstr "Ereignisanalysator"
+
+#: event_analyzer.py:346
+msgid "Select an existing JLS file."
+msgstr "Wählen Sie eine vorhandene JLS-Datei aus."
+
+#: event_analyzer.py:352
+msgid "The templates file does not exist."
+msgstr "Die Vorlagendatei existiert nicht."
+
+#: event_analyzer.py:369
+msgid "This directory already contains a report for this capture. Replace it?"
+msgstr ""
+"Dieses Verzeichnis enthält bereits einen Bericht zu dieser Aufzeichnung. "
+"Möchten Sie ihn ersetzen?"
+
+#: event_analyzer.py:378
+msgid "Analyzing..."
+msgstr "Wird analysiert..."
+
+#: event_analyzer.py:402
+msgid "Event analysis failed"
+msgstr "Die Ereignisanalyse ist fehlgeschlagen"
+
+#: event_analyzer.py:404
+msgid "Cancelled"
+msgstr "Storniert"
+
+#: event_analyzer.py:409
+msgid "Cancelling..."
+msgstr "Wird abgebrochen..."
 
 #: exporter.py:52 widgets/signal_record/signal_record_config_widget.py:148
 #: widgets/statistics_record/statistics_record_config_widget.py:111
@@ -408,13 +558,14 @@ msgstr "Dateiname"
 msgid "Notes"
 msgstr "Anmerkungen"
 
-#: exporter.py:89 widgets/signal_record/signal_record_config_widget.py:241
+#: exporter.py:89 widgets/efficiency/efficiency_widget.py:591
+#: widgets/signal_record/signal_record_config_widget.py:241
 #: widgets/signal_record/signal_record_config_widget.py:268
 #: widgets/statistics_record/statistics_record_config_widget.py:173
 msgid "Select save location"
 msgstr "Speicherort auswählen"
 
-#: exporter.py:139 main.py:906
+#: exporter.py:139 main.py:908
 msgid "Export configuration"
 msgstr "Konfiguration exportieren"
 
@@ -434,7 +585,7 @@ msgstr ""
 "Exportieren von Daten in eine JLS-Datei. Sie können diese Datei später "
 "öffnen, um die exportierten Daten anzuzeigen."
 
-#: exporter.py:311
+#: exporter.py:311 widgets/efficiency/efficiency_widget.py:608
 msgid "Export failed"
 msgstr "Export fehlgeschlagen"
 
@@ -614,23 +765,23 @@ msgstr ""
 "Die Anwendung wird automatisch geschlossen, wenn Sie das Gebietsschema "
 "ändern."
 
-#: main.py:78 widgets/value/value_widget.py:788
+#: main.py:79 widgets/value/value_widget.py:788
 msgid "Multimeter"
 msgstr "Multimeter"
 
-#: main.py:79
+#: main.py:80
 msgid "Oscilloscope"
 msgstr "Oszilloskop"
 
-#: main.py:80 main.py:385 main.py:454 main.py:501
+#: main.py:81 main.py:386 main.py:456 main.py:503
 msgid "File"
 msgstr "Datei"
 
-#: main.py:90
+#: main.py:91
 msgid "The UI status bar display mode"
 msgstr "Der UI-Statusleisten-Anzeigemodus"
 
-#: main.py:91
+#: main.py:92
 msgid ""
 "This setting controls the amount of detail shown on the status bar at the "
 "bottom of the UI window. You should usually leave this set to \"normal\" "
@@ -641,23 +792,23 @@ msgstr ""
 "diese Einstellung auf \"normal\" belassen, es sei denn, Sie möchten mehr "
 "Details über den internen Betrieb der Benutzeroberfläche erfahren."
 
-#: main.py:96 safe_mode.py:43
+#: main.py:97 safe_mode.py:43
 msgid "Normal"
 msgstr "Normal"
 
-#: main.py:97
+#: main.py:98
 msgid "Troubleshoot"
 msgstr "Fehlersuche"
 
-#: main.py:103
+#: main.py:104
 msgid "Enable developer mode."
 msgstr "Aktivieren Sie den Entwicklermodus."
 
-#: main.py:116
+#: main.py:117
 msgid "PubSub utilization"
 msgstr "PubSub Nutzung"
 
-#: main.py:117
+#: main.py:118
 msgid ""
 "Display the number of actions processed by the publish-subscribe broker in "
 "each second."
@@ -665,11 +816,11 @@ msgstr ""
 "Zeigt die Anzahl der Aktionen an, die der Publish-Subscribe-Broker in jeder "
 "Sekunde verarbeitet."
 
-#: main.py:122
+#: main.py:123
 msgid "CPU utilization"
 msgstr "CPU-Auslastung"
 
-#: main.py:123
+#: main.py:124
 msgid ""
 "Display the CPU utilization by this application and the total CPU "
 "utilization by all applications. The value is displayed in percent."
@@ -677,11 +828,11 @@ msgstr ""
 "Zeigt die CPU-Auslastung durch diese Anwendung und die gesamte CPU-"
 "Auslastung durch alle Anwendungen an. Der Wert wird in Prozent angezeigt."
 
-#: main.py:129
+#: main.py:130
 msgid "Memory utilization"
 msgstr "Speicherauslastung"
 
-#: main.py:130
+#: main.py:131
 msgid ""
 "Display the memory (RAM) utilization by this application and by all "
 "applications. The value is displayed in percent."
@@ -689,142 +840,143 @@ msgstr ""
 "Zeigt die Speicherauslastung (RAM) durch diese Anwendung und durch alle "
 "Anwendungen an. Der Wert wird in Prozent angezeigt."
 
-#: main.py:297
+#: main.py:298
 msgid "UI"
 msgstr "UI"
 
-#: main.py:417
+#: main.py:418
 msgid "Help"
 msgstr "Hilfe"
 
-#: main.py:418 widgets/hamburger/hamburger_widget.py:21
+#: main.py:419 widgets/hamburger/hamburger_widget.py:21
 msgid "Getting Started"
 msgstr "Erste Schritte"
 
-#: main.py:419
+#: main.py:420
 msgid "Language"
 msgstr "Sprache"
 
-#: main.py:420
+#: main.py:421
 msgid "User's Guide"
 msgstr "Benutzerhandbuch"
 
-#: main.py:421 widgets/hamburger/hamburger_widget.py:22
+#: main.py:422 widgets/hamburger/hamburger_widget.py:22
 msgid "Changelog"
 msgstr "Changelog"
 
-#: main.py:422 widgets/help/help_widget.py:63
+#: main.py:423 widgets/help/help_widget.py:63
 msgid "Report Issue"
 msgstr "Bericht Ausgabe"
 
-#: main.py:423
+#: main.py:424
 msgid "View logs..."
 msgstr "Protokolle anzeigen..."
 
-#: main.py:424 widgets/hamburger/hamburger_widget.py:23
+#: main.py:425 widgets/hamburger/hamburger_widget.py:23
 msgid "Credits"
 msgstr "Credits"
 
-#: main.py:425 widgets/hamburger/hamburger_widget.py:24
+#: main.py:426 widgets/hamburger/hamburger_widget.py:24
 msgid "About"
 msgstr "Über"
 
-#: main.py:429
+#: main.py:430
 msgid "Clear Accumulators"
 msgstr "Akkumulatoren zurücksetzen"
 
-#: main.py:432
+#: main.py:434
 msgid "Configure high accuracy time"
 msgstr "Konfigurieren Sie hochgenaue Zeit"
 
 #: devices/serial/serial_port_dialog.py:145
-#: devices/serial/serial_port_dialog.py:159 main.py:455
+#: devices/serial/serial_port_dialog.py:159 main.py:457
 msgid "Open"
 msgstr "Öffnen"
 
-#: main.py:456
+#: main.py:458
 msgid "Open recent"
 msgstr "Zuletzt geöffnet"
 
-#: main.py:457 main.py:507 widgets/trigger/trigger_widget.py:467
+#: main.py:459 main.py:509 widgets/trigger/trigger_widget.py:467
 #: widgets/trigger/trigger_widget.py:480
 msgid "Config"
 msgstr "Konfig"
 
-#: main.py:458 main.py:508 widgets/waveform/waveform_widget.py:4204
+#: main.py:460 main.py:510 widgets/efficiency/efficiency_widget.py:635
+#: widgets/waveform/waveform_widget.py:4260
 msgid "Export"
 msgstr "Exportieren"
 
-#: main.py:459 main.py:509 main.py:963
+#: main.py:461 main.py:511 main.py:965
 msgid "Import and restart"
 msgstr "Importieren und neu starten"
 
-#: main.py:460 main.py:510 main.py:966
+#: main.py:462 main.py:512 main.py:968
 msgid "Import and exit"
 msgstr "Importieren und Beenden"
 
-#: main.py:461 main.py:511 main.py:980
+#: main.py:463 main.py:513 main.py:982
 msgid "Clear and restart"
 msgstr "Löschen und neu starten"
 
-#: main.py:462 main.py:512 main.py:983
+#: main.py:464 main.py:514 main.py:985
 msgid "Clear and exit"
 msgstr "Klar und deutlich"
 
-#: main.py:467 widgets/settings/settings_widget.py:541
+#: main.py:469 widgets/settings/settings_widget.py:661
 msgid "Widgets"
 msgstr "Widgets"
 
-#: main.py:468
+#: main.py:470
 msgid "Tools"
 msgstr "Werkzeuge"
 
-#: main.py:502
+#: main.py:504
 msgid "Info"
 msgstr "Info"
 
-#: main.py:503 widget_tools.py:119 widgets/settings/settings_widget.py:31
-#: widgets/settings/settings_widget.py:574
+#: main.py:505 widget_tools.py:119 widgets/settings/settings_widget.py:32
+#: widgets/settings/settings_widget.py:694
 #: widgets/sidebar/sidebar_widget.py:42
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: main.py:823
+#: main.py:825
 msgid "Manage"
 msgstr "Ansichts-Einstellungen"
 
-#: main.py:883
+#: main.py:885
 msgid "Select file to open"
 msgstr "Datei zum Öffnen auswählen"
 
-#: main.py:926
+#: main.py:928
 msgid "Configuration export failed."
 msgstr "Der Export der Konfiguration ist fehlgeschlagen."
 
-#: main.py:940
+#: main.py:942
 msgid "Import configuration"
 msgstr "Konfiguration importieren"
 
-#: main.py:959
+#: main.py:961
 msgid "The selected file is not a valid Joulescope UI configuration."
 msgstr "Die ausgewählte Datei ist keine gültige Joulescope-UI-Konfiguration."
 
-#: main.py:964
+#: main.py:966
 msgid "Replace the current configuration with the imported file and restart?"
 msgstr ""
 "Die aktuelle Konfiguration durch die importierte Datei ersetzen und neu "
 "starten?"
 
-#: main.py:967
+#: main.py:969
 msgid "Replace the current configuration with the imported file and exit?"
 msgstr ""
 "Die aktuelle Konfiguration durch die importierte Datei ersetzen und beenden?"
 
-#: main.py:981
+#: main.py:983
 msgid "Clear the configuration and restart?"
 msgstr "Konfiguration löschen und neu starten?"
 
-#: main.py:984
+#: main.py:986
 msgid "Clear the configuration and exit?"
 msgstr "Konfiguration löschen und beenden?"
 
@@ -1021,8 +1173,8 @@ msgstr "Standort der Steuerung"
 
 #: widget_tools.py:94 widgets/serial_console/serial_console_widget.py:218
 #: widgets/waveform/waveform_source_widget.py:104
-#: widgets/waveform/waveform_widget.py:409
-#: widgets/waveform/waveform_widget.py:430
+#: widgets/waveform/waveform_widget.py:410
+#: widgets/waveform/waveform_widget.py:445
 msgid "off"
 msgstr "aus"
 
@@ -1046,11 +1198,11 @@ msgstr "ZIP File"
 msgid "Contents"
 msgstr "Inhalt"
 
-#: devices/jsdrv/device.py:20
+#: devices/jsdrv/device.py:21
 msgid "Enable the streaming for the selected current range."
 msgstr "Aktivieren Sie das Streaming für den ausgewählten Strombereich."
 
-#: devices/jsdrv/device.py:21
+#: devices/jsdrv/device.py:22
 msgid ""
 "The current range is useful for understanding how your Joulescope autoranges"
 " to measure your current signal. It can also be helpful in separating target"
@@ -1092,7 +1244,7 @@ msgstr ""
 #: devices/jsdrv/js220.py:106 devices/jsdrv/js220.py:136
 #: devices/jsdrv/js320.py:102 devices/jsdrv/js320.py:132
 #: devices/serial/serial_device.py:45 devices/serial/serial_device.py:69
-#: widgets/device_control/js220_ctrl_widget.py:36
+#: widgets/device_control/js220_ctrl_widget.py:37
 msgid "Device information"
 msgstr "Informationen zum Gerät"
 
@@ -1169,7 +1321,7 @@ msgstr ""
 "Stromzyklus verwendet werden kann."
 
 #: devices/jsdrv/js110.py:147 devices/jsdrv/js220.py:210
-#: devices/jsdrv/js320.py:205 widgets/waveform/waveform_widget.py:119
+#: devices/jsdrv/js320.py:205 widgets/waveform/waveform_widget.py:120
 msgid "Current range"
 msgstr "Strombereich"
 
@@ -1334,7 +1486,7 @@ msgstr ""
 
 #: devices/jsdrv/js110.py:269 devices/jsdrv/js220.py:435
 #: devices/jsdrv/js320.py:415 widgets/device_control/fuse.py:103
-#: widgets/waveform/waveform_widget.py:114
+#: widgets/waveform/waveform_widget.py:115
 msgid "Current"
 msgstr "Strom"
 
@@ -1344,7 +1496,7 @@ msgid "Enable the current signal streaming."
 msgstr "Aktivieren Sie das Stromsignal-Streaming."
 
 #: devices/jsdrv/js110.py:278 devices/jsdrv/js220.py:444
-#: devices/jsdrv/js320.py:424 widgets/waveform/waveform_widget.py:115
+#: devices/jsdrv/js320.py:424 widgets/waveform/waveform_widget.py:116
 msgid "Voltage"
 msgstr "Voltage"
 
@@ -1354,7 +1506,7 @@ msgid "Enable the voltage signal streaming."
 msgstr "Aktivieren Sie das Streaming von Spannungssignalen."
 
 #: devices/jsdrv/js110.py:287 devices/jsdrv/js220.py:453
-#: devices/jsdrv/js320.py:433 widgets/waveform/waveform_widget.py:116
+#: devices/jsdrv/js320.py:433 widgets/waveform/waveform_widget.py:117
 msgid "Power"
 msgstr "Strom"
 
@@ -1664,7 +1816,7 @@ msgid "Enable the general purpose input 3 signal streaming."
 msgstr "Aktivieren Sie den Allzweckeingang 3 Signalstreaming."
 
 #: devices/jsdrv/js220.py:512 devices/jsdrv/js320.py:492
-#: widgets/waveform/waveform_widget.py:133
+#: widgets/waveform/waveform_widget.py:134
 msgid "Trigger input"
 msgstr "Trigger-Eingang"
 
@@ -1754,11 +1906,11 @@ msgstr ""
 #: devices/jsdrv/jsdrv_stream_buffer.py:93
 #: devices/jsdrv/jsdrv_stream_buffer.py:107
 #: devices/serial/serial_port_dialog.py:46 plugins/selector.py:58
-#: widgets/settings/settings_widget.py:85
-#: widgets/settings/settings_widget.py:266
-#: widgets/settings/settings_widget.py:364
-#: widgets/settings/settings_widget.py:431
-#: widgets/waveform/waveform_widget.py:3768
+#: widgets/settings/settings_widget.py:142
+#: widgets/settings/settings_widget.py:334
+#: widgets/settings/settings_widget.py:441
+#: widgets/settings/settings_widget.py:515
+#: widgets/waveform/waveform_widget.py:3820
 msgid "Name"
 msgstr "Name"
 
@@ -1852,7 +2004,7 @@ msgid "Auto-open"
 msgstr "Auto-open"
 
 #: devices/serial/serial_port_dialog.py:88
-#: widgets/waveform/waveform_widget.py:3823
+#: widgets/waveform/waveform_widget.py:3875
 msgid "Add"
 msgstr "hinzufügen"
 
@@ -1861,9 +2013,9 @@ msgid "Closed"
 msgstr "Geschlossen"
 
 #: devices/serial/serial_port_dialog.py:163
-#: widgets/waveform/waveform_widget.py:4276
-#: widgets/waveform/waveform_widget.py:4304
-#: widgets/waveform/waveform_widget.py:4348
+#: widgets/waveform/waveform_widget.py:4332
+#: widgets/waveform/waveform_widget.py:4360
+#: widgets/waveform/waveform_widget.py:4404
 msgid "Remove"
 msgstr "entfernen"
 
@@ -1966,7 +2118,7 @@ msgstr "Wahrscheinlichkeits-Dichte-Verteilung"
 
 #: range_tools/histogram.py:44 range_tools/max_window.py:109
 #: widgets/spectrum/spectrum_control.py:36
-#: widgets/spectrum/spectrum_widget.py:1105
+#: widgets/spectrum/spectrum_widget.py:1076
 #: widgets/trigger/trigger_widget.py:220
 msgid "Signal"
 msgstr "Signal"
@@ -2110,13 +2262,13 @@ msgstr "Uhr"
 msgid "The time zone."
 msgstr "Die Zeitzone."
 
-#: widgets/clock/clock_widget.py:35 widgets/waveform/waveform_widget.py:442
-#: widgets/waveform/waveform_widget.py:3593
+#: widgets/clock/clock_widget.py:35 widgets/waveform/waveform_widget.py:457
+#: widgets/waveform/waveform_widget.py:3642
 msgid "Local"
 msgstr "Lokal"
 
-#: widgets/clock/clock_widget.py:36 widgets/waveform/waveform_widget.py:441
-#: widgets/waveform/waveform_widget.py:3590
+#: widgets/clock/clock_widget.py:36 widgets/waveform/waveform_widget.py:456
+#: widgets/waveform/waveform_widget.py:3639
 msgid "UTC"
 msgstr "UTC"
 
@@ -2286,24 +2438,24 @@ msgstr "Zeit"
 msgid "Fuse"
 msgstr "Sicherung"
 
-#: widgets/device_control/js220_ctrl_widget.py:31
+#: widgets/device_control/js220_ctrl_widget.py:32
 msgid "Device documentation"
 msgstr "Gerätedokumentation"
 
-#: widgets/device_control/js220_ctrl_widget.py:32
+#: widgets/device_control/js220_ctrl_widget.py:33
 msgid "Click to display the device documentation PDF."
 msgstr "Klicken Sie hier, um das PDF der Gerätedokumentation anzuzeigen."
 
-#: widgets/device_control/js220_ctrl_widget.py:37
+#: widgets/device_control/js220_ctrl_widget.py:38
 msgid "Click to display detailed information about the device."
 msgstr ""
 "Klicken Sie hier, um detaillierte Informationen über das Gerät anzuzeigen."
 
-#: widgets/device_control/js220_ctrl_widget.py:41
+#: widgets/device_control/js220_ctrl_widget.py:42
 msgid "Select this device as the default"
 msgstr "Wählen Sie dieses Gerät als Standard"
 
-#: widgets/device_control/js220_ctrl_widget.py:43
+#: widgets/device_control/js220_ctrl_widget.py:44
 msgid ""
 "When selected, this device because the default. All widgets using the "
 "default device will use the data provided by this device."
@@ -2312,7 +2464,7 @@ msgstr ""
 "die das Standardgerät verwenden, nutzen die von diesem Gerät "
 "bereitgestellten Daten."
 
-#: widgets/device_control/js220_ctrl_widget.py:45
+#: widgets/device_control/js220_ctrl_widget.py:46
 msgid ""
 "When unselected, another device is the default. Widgets can still be "
 "configured to use data from this device."
@@ -2320,7 +2472,7 @@ msgstr ""
 "Wenn nicht ausgewählt, ist ein anderes Gerät der Standard. Widgets können "
 "dennoch so konfiguriert werden, dass sie Daten von diesem Gerät verwenden."
 
-#: widgets/device_control/js220_ctrl_widget.py:53
+#: widgets/device_control/js220_ctrl_widget.py:54
 msgid ""
 "This indicator becomes active when this device has at least one engaged "
 "fuse. Engaged fuses prevent current flow until cleared."
@@ -2329,11 +2481,11 @@ msgstr ""
 "hat. Eingeschaltete Sicherungen verhindern den Stromfluss, bis sie gelöscht "
 "werden."
 
-#: widgets/device_control/js220_ctrl_widget.py:61
+#: widgets/device_control/js220_ctrl_widget.py:62
 msgid "Open and close the device"
 msgstr "Öffnen und schließen Sie das Gerät"
 
-#: widgets/device_control/js220_ctrl_widget.py:63
+#: widgets/device_control/js220_ctrl_widget.py:64
 msgid ""
 "When closed, click to attempt to open the device. The icon will only change "
 "on a successful device open. Only one application can use a Joulescope "
@@ -2344,7 +2496,7 @@ msgstr ""
 "geöffnet wurde. Nur eine Anwendung kann ein Joulescope-Gerät gleichzeitig "
 "verwenden."
 
-#: widgets/device_control/js220_ctrl_widget.py:66
+#: widgets/device_control/js220_ctrl_widget.py:67
 msgid ""
 "When open, click to close the device. This allows the device to be used in "
 "other programs."
@@ -2352,21 +2504,28 @@ msgstr ""
 "Wenn geöffnet, klicken Sie auf , um das Gerät zu schließen. Dadurch kann das"
 " Gerät in anderen Programmen verwendet werden."
 
-#: widgets/device_control/js220_ctrl_widget.py:72
-msgid "Reset to default settings"
-msgstr "Zurücksetzen auf Standardeinstellungen"
-
 #: widgets/device_control/js220_ctrl_widget.py:73
-msgid "Click this button to reset this device to the default settings"
-msgstr ""
-"Klicken Sie auf diese Schaltfläche, um dieses Gerät auf die "
-"Standardeinstellungen zurückzusetzen"
+#: widgets/device_control/js220_ctrl_widget.py:654
+#: widgets/settings/settings_widget.py:566
+msgid "Reset to defaults"
+msgstr "Zurücksetzen auf Standardwerte"
 
-#: widgets/device_control/js220_ctrl_widget.py:77
+#: widgets/device_control/js220_ctrl_widget.py:74
+msgid ""
+"Click this button to close this device and reset its settings to the device "
+"defaults. Edit the device defaults in the Settings widget under Devices. "
+"Undo restores the previous settings."
+msgstr ""
+"Klicken Sie auf diese Schaltfläche, um das Gerät zu schließen und die "
+"Einstellungen auf die Werkseinstellungen zurückzusetzen. Bearbeiten Sie die "
+"Werkseinstellungen im Widget „Einstellungen“ unter „Geräte“. Mit "
+"„Rückgängig“ werden die vorherigen Einstellungen wiederhergestellt."
+
+#: widgets/device_control/js220_ctrl_widget.py:80
 msgid "Clear accumulators"
 msgstr "Akkumulatoren zurücksetzen"
 
-#: widgets/device_control/js220_ctrl_widget.py:78
+#: widgets/device_control/js220_ctrl_widget.py:81
 msgid ""
 "Click this button to clear the charge and energy accumulators. The "
 "\"Accrue\" feature of the value display widgets, including the multimeter, "
@@ -2376,12 +2535,12 @@ msgstr ""
 "löschen. Die \"Accrue\"-Funktion der Wertanzeige-Widgets, einschließlich des"
 " Multimeters, bleibt davon unberührt."
 
-#: widgets/device_control/js220_ctrl_widget.py:84
-#: widgets/device_control/js220_ctrl_widget.py:666
+#: widgets/device_control/js220_ctrl_widget.py:87
+#: widgets/device_control/js220_ctrl_widget.py:669
 msgid "Calibrate"
 msgstr "Kalibrieren"
 
-#: widgets/device_control/js220_ctrl_widget.py:85
+#: widgets/device_control/js220_ctrl_widget.py:88
 msgid ""
 "Click this button to recalibrate your Joulescope JS220. Recalibration is not"
 " required for normal operation. Performing calibration can improve accuracy "
@@ -2393,17 +2552,375 @@ msgstr ""
 "verbessern, indem die vorhandenen Temperatur- und Alterungseffekte "
 "berücksichtigt werden."
 
-#: widgets/device_control/js220_ctrl_widget.py:443
+#: widgets/device_control/js220_ctrl_widget.py:446
 msgid "GPO"
 msgstr "GPO"
 
-#: widgets/device_control/js220_ctrl_widget.py:651
-msgid "Reset to defaults"
-msgstr "Zurücksetzen auf Standardwerte"
-
-#: widgets/device_control/js220_ctrl_widget.py:657
+#: widgets/device_control/js220_ctrl_widget.py:660
 msgid "Clear accum"
 msgstr "Klare Akkumulation"
+
+#: widgets/efficiency/efficiency_control.py:24
+#: widgets/spectrum/spectrum_control.py:30 widgets/value/value_widget.py:125
+msgid "Hold the display"
+msgstr "Halten Sie das Display"
+
+#: widgets/efficiency/efficiency_control.py:25
+msgid "When selected, ignore new data so that the display stays frozen."
+msgstr ""
+"Wenn diese Option ausgewählt ist, werden neue Daten ignoriert, sodass die "
+"Anzeige eingefroren bleibt."
+
+#: widgets/efficiency/efficiency_control.py:27
+#: widgets/efficiency/efficiency_control.py:53
+#: widgets/efficiency/efficiency_widget.py:638
+#: widgets/memory/memory_widget.py:238 widgets/spectrum/spectrum_control.py:33
+#: widgets/spectrum/spectrum_control.py:68
+#: widgets/spectrum/spectrum_widget.py:1080
+msgid "Clear"
+msgstr "Übersichtlich"
+
+#: widgets/efficiency/efficiency_control.py:28
+msgid "Clear the cumulative efficiency, history, and efficiency curve."
+msgstr "Lösch die kumulative Effizienz, den Verlauf und die Effizienzkurve."
+
+#: widgets/efficiency/efficiency_control.py:30
+#: widgets/efficiency/efficiency_control.py:54
+#: widgets/efficiency/efficiency_widget.py:40
+msgid "Input"
+msgstr "Eingabe"
+
+#: widgets/efficiency/efficiency_control.py:31
+msgid ""
+"The instrument that measures the converter input. Connect its voltage inputs"
+" at the converter input pins."
+msgstr ""
+"Das Messgerät, das den Eingang des Wandlers misst. Schließen Sie seine "
+"Spannungseingänge an die Eingangspins des Wandlers an."
+
+#: widgets/efficiency/efficiency_control.py:34
+#: widgets/efficiency/efficiency_control.py:57
+#: widgets/efficiency/efficiency_widget.py:40
+msgid "Output"
+msgstr "Ausgabe"
+
+#: widgets/efficiency/efficiency_control.py:35
+msgid ""
+"The instrument that measures the converter output. Connect its voltage "
+"inputs at the converter output pins."
+msgstr ""
+"Das Messgerät, das den Ausgang des Wandlers misst. Schließen Sie seine "
+"Spannungseingänge an die Ausgangspins des Wandlers an."
+
+#: widgets/efficiency/efficiency_control.py:37
+msgid "Swap"
+msgstr "Austauschen"
+
+#: widgets/efficiency/efficiency_control.py:37
+msgid "Swap the input and output instruments."
+msgstr "Tauschen Sie die Eingangs- und Ausgangsinstrumente aus."
+
+#: widgets/efficiency/efficiency_control.py:39
+#: widgets/efficiency/efficiency_control.py:59
+msgid "Enable signals"
+msgstr "Signale aktivieren"
+
+#: widgets/efficiency/efficiency_control.py:40
+msgid "Enable the instrument signals that this widget needs."
+msgstr "Aktivieren Sie die Gerätesignale, die dieses Widget benötigt."
+
+#: widgets/efficiency/efficiency_control.py:52
+#: widgets/efficiency/efficiency_widget.py:737
+#: widgets/spectrum/spectrum_control.py:67
+#: widgets/spectrum/spectrum_widget.py:1196 widgets/value/value_widget.py:257
+msgid "Hold"
+msgstr "Halten"
+
+#: widgets/efficiency/efficiency_plot.py:215
+msgid "invalid"
+msgstr "ungültig"
+
+#: widgets/efficiency/efficiency_plot.py:288
+msgid "Waiting for steady load"
+msgstr "Warten auf eine konstante Last"
+
+#: widgets/efficiency/efficiency_plot.py:348
+#, python-brace-format
+msgid "{0} windows, {1}"
+msgstr "{0} Fenster, {1}"
+
+#: widgets/efficiency/efficiency_readout.py:62
+msgid "Input power"
+msgstr "Eingangsleistung"
+
+#: widgets/efficiency/efficiency_readout.py:63
+#: widgets/efficiency/efficiency_widget.py:101
+msgid "Output power"
+msgstr "Ausgangsleistung"
+
+#: widgets/efficiency/efficiency_readout.py:64
+msgid "Power loss"
+msgstr "Leistungsverlust"
+
+#: widgets/efficiency/efficiency_readout.py:65
+msgid "Cumulative efficiency"
+msgstr "Kumulativer Wirkungsgrad"
+
+#: widgets/efficiency/efficiency_readout.py:69
+msgid "Input voltage"
+msgstr "Eingangsspannung"
+
+#: widgets/efficiency/efficiency_readout.py:70
+msgid "Input current"
+msgstr "Eingangsstrom"
+
+#: widgets/efficiency/efficiency_readout.py:71
+msgid "Output voltage"
+msgstr "Ausgangsspannung"
+
+#: widgets/efficiency/efficiency_readout.py:72
+#: widgets/efficiency/efficiency_widget.py:101
+msgid "Output current"
+msgstr "Ausgangsstrom"
+
+#: widgets/efficiency/efficiency_readout.py:132
+#: widgets/efficiency/efficiency_widget.py:167
+msgid "Efficiency"
+msgstr "Wirkungsgrad"
+
+#: widgets/efficiency/efficiency_widget.py:43
+msgid "power"
+msgstr "Leistung"
+
+#: widgets/efficiency/efficiency_widget.py:43
+msgid "current"
+msgstr "Strom"
+
+#: widgets/efficiency/efficiency_widget.py:43
+msgid "voltage"
+msgstr "Spannung"
+
+#: widgets/efficiency/efficiency_widget.py:55
+msgid "The input instrument."
+msgstr "Das Eingabegerät."
+
+#: widgets/efficiency/efficiency_widget.py:61
+msgid "The output instrument."
+msgstr "Das Output-Instrument."
+
+#: widgets/efficiency/efficiency_widget.py:67
+#: widgets/spectrum/spectrum_widget.py:81
+msgid "Hold the display."
+msgstr "Anzeige halten."
+
+#: widgets/efficiency/efficiency_widget.py:73
+msgid "Show voltage and current"
+msgstr "Spannung und Strom anzeigen"
+
+#: widgets/efficiency/efficiency_widget.py:74
+msgid "Show the input and output voltage and current in the readout."
+msgstr ""
+"Zeigen Sie die Eingangs- und Ausgangsspannung sowie den Strom in der Anzeige"
+" an."
+
+#: widgets/efficiency/efficiency_widget.py:80
+msgid "Show efficiency vs time"
+msgstr "Effizienz im Zeitverlauf anzeigen"
+
+#: widgets/efficiency/efficiency_widget.py:85
+msgid "Efficiency vs time duration"
+msgstr "Wirkungsgrad im Vergleich zur Dauer"
+
+#: widgets/efficiency/efficiency_widget.py:86
+msgid ""
+"The duration of the efficiency vs time history. Use the mouse wheel to zoom "
+"in to recent history."
+msgstr ""
+"Die Dauer des Verlaufs von Wirkungsgrad über die Zeit. Verwenden Sie das "
+"Mausrad, um den jüngsten Verlauf zu vergrößern."
+
+#: widgets/efficiency/efficiency_widget.py:94
+msgid "Show the efficiency curve"
+msgstr "Effizienzkurve anzeigen"
+
+#: widgets/efficiency/efficiency_widget.py:99
+msgid "Efficiency curve x-axis"
+msgstr "Effizienzkurve – x-Achse"
+
+#: widgets/efficiency/efficiency_widget.py:105
+msgid "Efficiency curve x-axis scale"
+msgstr "Skala der x-Achse der Wirkungsgradkurve"
+
+#: widgets/efficiency/efficiency_widget.py:107
+#: widgets/waveform/waveform_widget.py:3786
+msgid "Logarithmic"
+msgstr "Logarithmisch"
+
+#: widgets/efficiency/efficiency_widget.py:107
+#: widgets/waveform/waveform_widget.py:3781
+msgid "Linear"
+msgstr "Linear"
+
+#: widgets/efficiency/efficiency_widget.py:111
+msgid "Efficiency curve bins per decade"
+msgstr "Effizienz-Kurvenbänder pro Dekade"
+
+#: widgets/efficiency/efficiency_widget.py:112
+msgid ""
+"The efficiency curve groups steady windows into logarithmically spaced load "
+"bins. More bins give finer load resolution but need more data."
+msgstr ""
+"Die Wirkungsgradkurve gruppiert konstante Zeitfenster in logarithmisch "
+"angeordnete Lastklassen. Mehr Klassen sorgen für eine feinere Lastauflösung,"
+" erfordern jedoch mehr Daten."
+
+#: widgets/efficiency/efficiency_widget.py:120
+msgid "Efficiency curve window"
+msgstr "Fenster „Effizienzkurve“"
+
+#: widgets/efficiency/efficiency_widget.py:121
+msgid ""
+"The duration of each efficiency curve measurement. Statistics uses the "
+"statistics window. A shorter window captures load points from fast load "
+"sweeps, but includes more energy storage error from the converter "
+"capacitance."
+msgstr ""
+"Die Dauer jeder Messung der Wirkungsgradkurve. Für die Statistik wird das "
+"Statistikfenster verwendet. Ein kürzeres Fenster erfasst Lastpunkte aus "
+"schnellen Lastdurchläufen, beinhaltet jedoch einen höheren "
+"Energiespeicherfehler aufgrund der Wandlerkapazität."
+
+#: widgets/efficiency/efficiency_widget.py:126
+msgid "Statistics"
+msgstr "Statistiken"
+
+#: widgets/efficiency/efficiency_widget.py:131
+msgid "Steady load threshold"
+msgstr "Schwelle für konstante Last"
+
+#: widgets/efficiency/efficiency_widget.py:132
+msgid ""
+"The efficiency curve only includes windows where the input and output power "
+"vary by less than this fraction of their mean within the window."
+msgstr ""
+"Die Wirkungsgradkurve umfasst nur Fenster, in denen die Eingangs- und "
+"Ausgangsleistung um weniger als diesen Bruchteil ihres Mittelwerts innerhalb"
+" des Fensters variieren."
+
+#: widgets/efficiency/efficiency_widget.py:140
+msgid "Efficiency curve minimum windows"
+msgstr "Fenster für das Minimum der Wirkungsgradkurve"
+
+#: widgets/efficiency/efficiency_widget.py:141
+msgid "Draw bins with fewer windows faded and leave them off the line."
+msgstr ""
+"Zeichnen Sie die Bins mit weniger Fenstern ausgeblendet und lassen Sie sie "
+"außerhalb der Linie."
+
+#: widgets/efficiency/efficiency_widget.py:147
+msgid "Show the efficiency curve min and max"
+msgstr "Effizienz-Kurve (Min. und Max.) anzeigen"
+
+#: widgets/efficiency/efficiency_widget.py:152
+msgid "Hold the efficiency curve"
+msgstr "Halten Sie die Wirkungsgradkurve fest"
+
+#: widgets/efficiency/efficiency_widget.py:158
+msgid "The pane sizes."
+msgstr "Die Fenstergrößen."
+
+#: widgets/efficiency/efficiency_widget.py:568
+msgid "input"
+msgstr "Eingabe"
+
+#: widgets/efficiency/efficiency_widget.py:569
+msgid "output"
+msgstr "Ausgabe"
+
+#: widgets/efficiency/efficiency_widget.py:570
+msgid "window"
+msgstr "Fenster"
+
+#: widgets/efficiency/efficiency_widget.py:582
+msgid "curve window"
+msgstr "Kurvenfenster"
+
+#: widgets/efficiency/efficiency_widget.py:583
+msgid "steady threshold"
+msgstr "konstante Schwelle"
+
+#: widgets/efficiency/efficiency_widget.py:623
+msgid "Swap input and output"
+msgstr "Eingang und Ausgang vertauschen"
+
+#: widgets/efficiency/efficiency_widget.py:636
+msgid "Efficiency vs time (CSV)"
+msgstr "Wirkungsgrad im Zeitverlauf (CSV)"
+
+#: widgets/efficiency/efficiency_widget.py:637
+msgid "Efficiency curve (CSV)"
+msgstr "Wirkungsgradkurve (CSV)"
+
+#: widgets/efficiency/efficiency_widget.py:723
+#, python-brace-format
+msgid "{0} {1} is not connected"
+msgstr "{0} {1} ist nicht angeschlossen"
+
+#: widgets/efficiency/efficiency_widget.py:726
+msgid "Select the input and output instruments"
+msgstr "Wählen Sie die Eingangs- und Ausgangsgeräte aus"
+
+#: widgets/efficiency/efficiency_widget.py:729
+msgid "Select different input and output instruments"
+msgstr "Wählen Sie verschiedene Eingangs- und Ausgangsinstrumente aus"
+
+#: widgets/efficiency/efficiency_widget.py:734
+#, python-brace-format
+msgid "Disabled: {0}"
+msgstr "Deaktiviert: {0}"
+
+#: widgets/efficiency/efficiency_widget.py:739
+msgid "Curve hold"
+msgstr "Kurvenhaltefunktion"
+
+#: widgets/efficiency/efficiency_widget.py:741
+#: widgets/spectrum/spectrum_widget.py:1198
+msgid "Paused"
+msgstr "Angehalten"
+
+#: widgets/efficiency/efficiency_widget.py:748
+#, python-brace-format
+msgid "No data from {0}"
+msgstr "Keine Daten aus {0}"
+
+#: widgets/efficiency/efficiency_widget.py:751
+msgid "JS110 input includes its burden voltage"
+msgstr "Der Eingang des JS110 beinhaltet seine Lastspannung"
+
+#: widgets/efficiency/efficiency_widget.py:754
+msgid "Efficiency above 100%: swap input and output?"
+msgstr "Wirkungsgrad über 100 %: Eingang und Ausgang vertauschen?"
+
+#: widgets/efficiency/efficiency_widget.py:759
+#, python-brace-format
+msgid "{0} windows"
+msgstr "{0} Fenster"
+
+#: widgets/efficiency/efficiency_widget.py:761
+#, python-brace-format
+msgid "{0} invalid"
+msgstr "{0} ungültig"
+
+#: widgets/efficiency/efficiency_widget.py:763
+#, python-brace-format
+msgid "{0} unsteady"
+msgstr "{0} instabil"
+
+#: widgets/efficiency/efficiency_widget.py:766
+#: widgets/spectrum/spectrum_widget.py:1212
+#, python-brace-format
+msgid "overruns {0}"
+msgstr "Überschreitungen {0}"
 
 #: widgets/example/example_widget.py:22
 msgid "Example"
@@ -2586,7 +3103,7 @@ msgid "Save ACTIVE to:"
 msgstr "Speichern Sie ACTIVE unter:"
 
 #: widgets/js320_cal/js320_cal_widget.py:64
-#: widgets/waveform/waveform_widget.py:3842
+#: widgets/waveform/waveform_widget.py:3894
 msgid "Save"
 msgstr "Speichern Sie"
 
@@ -2671,12 +3188,6 @@ msgstr "Verfügbare RAM-Größe"
 #: widgets/memory/memory_widget.py:221
 msgid "Used RAM size"
 msgstr "Verwendete RAM-Größe"
-
-#: widgets/memory/memory_widget.py:238 widgets/spectrum/spectrum_control.py:33
-#: widgets/spectrum/spectrum_control.py:82
-#: widgets/spectrum/spectrum_widget.py:1109
-msgid "Clear"
-msgstr "Übersichtlich"
 
 #: widgets/memory/memory_widget.py:242
 msgid "Clear on play"
@@ -2782,45 +3293,80 @@ msgstr "Wellenform annotieren"
 msgid "External Serial..."
 msgstr "Externe serielle..."
 
-#: widgets/settings/settings_widget.py:87 widgets/value/value_widget.py:797
+#: widgets/settings/settings_widget.py:144 widgets/value/value_widget.py:797
 msgid "Value"
 msgstr "Wert"
 
-#: widgets/settings/settings_widget.py:268
+#: widgets/settings/settings_widget.py:336
 msgid "Color"
 msgstr "Farbe"
 
-#: widgets/settings/settings_widget.py:366
+#: widgets/settings/settings_widget.py:443
 msgid "Font"
 msgstr "Schriftart"
 
-#: widgets/settings/settings_widget.py:433
+#: widgets/settings/settings_widget.py:517
 msgid "Define"
 msgstr "Definieren Sie"
 
-#: widgets/settings/settings_widget.py:535
+#: widgets/settings/settings_widget.py:564
+msgid "Reset to factory default"
+msgstr "Auf Werkseinstellungen zurücksetzen"
+
+#: widgets/settings/settings_widget.py:564
+msgid "Reset to default"
+msgstr "Auf Werkseinstellungen zurücksetzen"
+
+#: widgets/settings/settings_widget.py:566
+msgid "Reset to factory defaults"
+msgstr "Auf Werkseinstellungen zurücksetzen"
+
+#: widgets/settings/settings_widget.py:568
+#, python-brace-format
+msgid "Reset {tab} to factory defaults"
+msgstr "{tab} auf Werkseinstellungen zurücksetzen"
+
+#: widgets/settings/settings_widget.py:569
+#, python-brace-format
+msgid "Reset {tab} to defaults"
+msgstr "{tab} auf Standardwerte zurücksetzen"
+
+#: widgets/settings/settings_widget.py:655
 msgid "Common"
 msgstr "Allgemein"
 
-#: widgets/settings/settings_widget.py:538
+#: widgets/settings/settings_widget.py:658
 msgid "View defaults"
 msgstr "Standardeinstellungen anzeigen"
 
-#: widgets/settings/settings_widget.py:540
+#: widgets/settings/settings_widget.py:660
 msgid "Devices"
 msgstr "Geräte"
 
-#: widgets/settings/settings_widget.py:575
+#: widgets/settings/settings_widget.py:695
 msgid "Colors"
 msgstr "Farben"
 
-#: widgets/settings/settings_widget.py:576
+#: widgets/settings/settings_widget.py:696
 msgid "Fonts"
 msgstr "Schriftarten"
 
-#: widgets/settings/settings_widget.py:577
+#: widgets/settings/settings_widget.py:697
 msgid "Defines"
 msgstr "Definiert"
+
+#: widgets/settings/settings_widget.py:715
+msgid "Reset"
+msgstr "Zurücksetzen"
+
+#: widgets/settings/settings_widget.py:791
+#, python-brace-format
+msgid "Reset all settings for {name}?"
+msgstr "Alle Einstellungen für {name} zurücksetzen?"
+
+#: widgets/settings/settings_widget.py:792
+msgid "Undo restores them."
+msgstr "Mit „Rückgängig“ werden sie wiederhergestellt."
 
 #: widgets/settings/unique_strings_widget.py:50
 msgid "Available"
@@ -2930,10 +3476,6 @@ msgstr "Aufzuzeichnende Signale"
 msgid "Configure signal recording"
 msgstr "Konfigurieren Sie die Signalaufzeichnung"
 
-#: widgets/spectrum/spectrum_control.py:30 widgets/value/value_widget.py:125
-msgid "Hold the display"
-msgstr "Halten Sie das Display"
-
 #: widgets/spectrum/spectrum_control.py:31
 msgid ""
 "When selected, ignore new data so that the spectrum and waterfall stay "
@@ -3020,11 +3562,6 @@ msgstr "Durchschnitt"
 msgid "The averaging mode for the average trace."
 msgstr "Der Mittelwertmodus für die Mittelwertkurve."
 
-#: widgets/spectrum/spectrum_control.py:75
-#: widgets/spectrum/spectrum_widget.py:1225 widgets/value/value_widget.py:257
-msgid "Hold"
-msgstr "Halten"
-
 #: widgets/spectrum/spectrum_plot.py:59
 msgid "Inferno"
 msgstr "Inferno"
@@ -3056,10 +3593,6 @@ msgstr "Die Quelle des Signaldatenstroms."
 #: widgets/spectrum/spectrum_widget.py:75
 msgid "The signal to analyze."
 msgstr "Das zu analysierende Signal."
-
-#: widgets/spectrum/spectrum_widget.py:81
-msgid "Hold the display."
-msgstr "Anzeige halten."
 
 #: widgets/spectrum/spectrum_widget.py:88
 msgid ""
@@ -3123,7 +3656,7 @@ msgid "PSD"
 msgstr "PSD"
 
 #: widgets/spectrum/spectrum_widget.py:138
-#: widgets/spectrum/spectrum_widget.py:1100
+#: widgets/spectrum/spectrum_widget.py:1071
 msgid "Y-axis units"
 msgstr "Einheiten auf der Y-Achse"
 
@@ -3324,64 +3857,55 @@ msgstr "Maximale Aktualisierungsrate (Hz)"
 msgid "Spectrum"
 msgstr "Spektrum"
 
-#: widgets/spectrum/spectrum_widget.py:1074
+#: widgets/spectrum/spectrum_widget.py:1045
 msgid "Add marker"
 msgstr "Markierung hinzufügen"
 
-#: widgets/spectrum/spectrum_widget.py:1077
+#: widgets/spectrum/spectrum_widget.py:1048
 msgid "Add marker at peak"
 msgstr "Markierung am Spitzenwert setzen"
 
-#: widgets/spectrum/spectrum_widget.py:1084
+#: widgets/spectrum/spectrum_widget.py:1055
 msgid "Remove marker"
 msgstr "Markierung entfernen"
 
-#: widgets/spectrum/spectrum_widget.py:1086
+#: widgets/spectrum/spectrum_widget.py:1057
 msgid "Clear markers"
 msgstr "Deutliche Markierungen"
 
-#: widgets/spectrum/spectrum_widget.py:1088
+#: widgets/spectrum/spectrum_widget.py:1059
 msgid "Traces"
 msgstr "Kurven"
 
-#: widgets/spectrum/spectrum_widget.py:1094
+#: widgets/spectrum/spectrum_widget.py:1065
 msgid "Logarithmic frequency"
 msgstr "Logarithmische Frequenz"
 
-#: widgets/spectrum/spectrum_widget.py:1095
+#: widgets/spectrum/spectrum_widget.py:1066
 msgid "Autoscale y-axis"
 msgstr "Y-Achse automatisch skalieren"
 
-#: widgets/spectrum/spectrum_widget.py:1096
+#: widgets/spectrum/spectrum_widget.py:1067
 msgid "Show FFT"
 msgstr "FFT anzeigen"
 
-#: widgets/spectrum/spectrum_widget.py:1097
+#: widgets/spectrum/spectrum_widget.py:1068
 msgid "Show waterfall"
 msgstr "Wasserfall anzeigen"
 
-#: widgets/spectrum/spectrum_widget.py:1223
+#: widgets/spectrum/spectrum_widget.py:1194
 msgid "No signal"
 msgstr "Kein Signal"
 
-#: widgets/spectrum/spectrum_widget.py:1227
-msgid "Paused"
-msgstr "Angehalten"
-
-#: widgets/spectrum/spectrum_widget.py:1232
+#: widgets/spectrum/spectrum_widget.py:1203
 #, python-brace-format
 msgid "gaps {0}"
 msgstr "Lücken {0}"
 
-#: widgets/spectrum/spectrum_widget.py:1238
+#: widgets/spectrum/spectrum_widget.py:1209
 #, python-brace-format
 msgid "waterfall {0}"
 msgstr "Wasserfall {0}"
-
-#: widgets/spectrum/spectrum_widget.py:1241
-#, python-brace-format
-msgid "overruns {0}"
-msgstr "Überschreitungen {0}"
 
 #: widgets/statistics_record/statistics_record_config_widget.py:86
 msgid "StatisticsRecordConfig"
@@ -3576,7 +4100,7 @@ msgstr "Zeigen Sie die Statistikfelder auf der rechten Seite an."
 msgid "Show a leading + or - sign."
 msgstr "Zeigt ein führendes + oder - Zeichen."
 
-#: widgets/value/value_widget.py:63 widgets/waveform/waveform_widget.py:493
+#: widgets/value/value_widget.py:63 widgets/waveform/waveform_widget.py:508
 msgid "The precision to display in digits."
 msgstr "Die Genauigkeit der Anzeige in Ziffern."
 
@@ -3693,7 +4217,7 @@ msgstr "Nicht vorhanden"
 msgid "Accrue"
 msgstr "Beschleunigt"
 
-#: widgets/value/value_widget.py:601 widgets/waveform/waveform_widget.py:3756
+#: widgets/value/value_widget.py:601 widgets/waveform/waveform_widget.py:3808
 msgid "Preferred prefix"
 msgstr "Bevorzugte Vorsilbe"
 
@@ -3755,7 +4279,7 @@ msgid "triangle left"
 msgstr "Dreieck links"
 
 #: widgets/waveform/text_annotation.py:67
-#: widgets/waveform/waveform_widget.py:3714
+#: widgets/waveform/waveform_widget.py:3766
 msgid "Manual"
 msgstr "Handbuch"
 
@@ -3764,17 +4288,17 @@ msgid "Centered"
 msgstr "Zentriert"
 
 #: widgets/waveform/text_annotation.py:101
-#: widgets/waveform/waveform_widget.py:3838
+#: widgets/waveform/waveform_widget.py:3890
 msgid "Text"
 msgstr "Text"
 
 #: widgets/waveform/text_annotation.py:109
-#: widgets/waveform/waveform_widget.py:4284
+#: widgets/waveform/waveform_widget.py:4340
 msgid "Show text"
 msgstr "Text anzeigen"
 
 #: widgets/waveform/text_annotation.py:118
-#: widgets/waveform/waveform_widget.py:4296
+#: widgets/waveform/waveform_widget.py:4352
 msgid "Shape"
 msgstr "Form"
 
@@ -3994,130 +4518,155 @@ msgstr ""
 "\"default\" verwendet die Standardquelle, die normalerweise über das Device "
 "Control Widget konfiguriert wird."
 
-#: widgets/waveform/waveform_widget.py:45
+#: widgets/waveform/waveform_widget.py:46
 msgid "Waveform"
 msgstr "Wellenform"
 
-#: widgets/waveform/waveform_widget.py:46
+#: widgets/waveform/waveform_widget.py:47
 msgid "Copy text to clipboard"
 msgstr "Text in die Zwischenablage kopieren"
 
-#: widgets/waveform/waveform_widget.py:76
+#: widgets/waveform/waveform_widget.py:77
 msgid "X-axis pinned: click the pin buttons or press Shift+Space to unpin"
 msgstr ""
 "X-Achse fixiert: Klicken Sie auf die Fixierungsschaltflächen oder drücken "
 "Sie Umschalt+Leertaste, um die Fixierung aufzuheben"
 
-#: widgets/waveform/waveform_widget.py:129
+#: widgets/waveform/waveform_widget.py:130
 msgid "General purpose input 0"
 msgstr "Allzweck-Eingang 0"
 
-#: widgets/waveform/waveform_widget.py:130
+#: widgets/waveform/waveform_widget.py:131
 msgid "General purpose input 1"
 msgstr "Allzweck-Eingang 1"
 
-#: widgets/waveform/waveform_widget.py:131
+#: widgets/waveform/waveform_widget.py:132
 msgid "General purpose input 2"
 msgstr "Allzweck-Eingang 2"
 
-#: widgets/waveform/waveform_widget.py:132
+#: widgets/waveform/waveform_widget.py:133
 msgid "General purpose input 3"
 msgstr "Allzweck-Eingang 3"
 
-#: widgets/waveform/waveform_widget.py:365
+#: widgets/waveform/waveform_widget.py:366
 msgid "The source filter string."
 msgstr "Die Quellfilterkette."
 
-#: widgets/waveform/waveform_widget.py:376
+#: widgets/waveform/waveform_widget.py:377
 msgid "The trace width."
 msgstr "Die Leiterbahnbreite."
 
-#: widgets/waveform/waveform_widget.py:391
+#: widgets/waveform/waveform_widget.py:392
 msgid "The target frames per second."
 msgstr "Die angestrebten Bilder pro Sekunde."
 
-#: widgets/waveform/waveform_widget.py:393
+#: widgets/waveform/waveform_widget.py:394
 msgid "vsync"
 msgstr "vsync"
 
-#: widgets/waveform/waveform_widget.py:394
+#: widgets/waveform/waveform_widget.py:395
 msgid "20 Hz"
 msgstr "20 Hz"
 
-#: widgets/waveform/waveform_widget.py:395
+#: widgets/waveform/waveform_widget.py:396
 msgid "10 Hz"
 msgstr "10 Hz"
 
-#: widgets/waveform/waveform_widget.py:396
+#: widgets/waveform/waveform_widget.py:397
 msgid "5 Hz"
 msgstr "5 Hz"
 
-#: widgets/waveform/waveform_widget.py:402
+#: widgets/waveform/waveform_widget.py:403
 msgid "The minimum interval between repaint in milliseconds."
 msgstr ""
 "Das minimale Intervall zwischen den Wiederholungsmessungen in Millisekunden."
 
-#: widgets/waveform/waveform_widget.py:407
+#: widgets/waveform/waveform_widget.py:408
 msgid "Show the minimum and maximum extents fill."
 msgstr "Zeigt die minimale und maximale Ausdehnung an."
 
-#: widgets/waveform/waveform_widget.py:410
+#: widgets/waveform/waveform_widget.py:411
 msgid "lines"
 msgstr "Zeilen"
 
-#: widgets/waveform/waveform_widget.py:411
+#: widgets/waveform/waveform_widget.py:412
 msgid "fill 1"
 msgstr "Füllung 1"
 
-#: widgets/waveform/waveform_widget.py:412
+#: widgets/waveform/waveform_widget.py:413
 msgid "fill 2"
 msgstr "Füllung 2"
 
-#: widgets/waveform/waveform_widget.py:418
+#: widgets/waveform/waveform_widget.py:419
+msgid "Anti-alias the average trace when zoomed out."
+msgstr "Anti-Aliasing der durchschnittlichen Kurve beim Herauszoomen."
+
+#: widgets/waveform/waveform_widget.py:421
+msgid ""
+"When zoomed out, each pixel summarizes many samples. As the plot scrolls, a "
+"short pulse may fall into one pixel or be split between two, which makes the"
+" average trace flicker."
+msgstr ""
+"Im ausgezoomten Zustand fasst jedes Pixel viele Messwerte zusammen. Beim "
+"Scrollen der Kurve kann ein kurzer Impuls in ein Pixel fallen oder auf zwei "
+"Pixel aufgeteilt werden, was zu einem Flackern der Durchschnittskurve führt."
+
+#: widgets/waveform/waveform_widget.py:424
+msgid ""
+"When enabled, the average trace is low-pass filtered to reduce this flicker."
+" The filter preserves the mean, but short pulses appear wider and lower. The"
+" min/max extents, statistics, and exported data are not filtered."
+msgstr ""
+"Wenn diese Funktion aktiviert ist, wird die Durchschnittskurve "
+"tiefpassgefiltert, um dieses Flackern zu reduzieren. Der Filter bewahrt den "
+"Mittelwert bei, doch kurze Impulse erscheinen breiter und tiefer. Die "
+"Min-/Max-Werte, Statistiken und exportierten Daten werden nicht gefiltert."
+
+#: widgets/waveform/waveform_widget.py:433
 msgid "Show the frames per second."
 msgstr "Zeigt die Bilder pro Sekunde an."
 
-#: widgets/waveform/waveform_widget.py:423
+#: widgets/waveform/waveform_widget.py:438
 msgid "Show the statistics on mouse hover."
 msgstr "Zeigen Sie die Statistik bei Mausbewegung an."
 
-#: widgets/waveform/waveform_widget.py:428
+#: widgets/waveform/waveform_widget.py:443
 msgid "The time format for mouse hover."
 msgstr "Das Zeitformat für den Mauszeiger."
 
-#: widgets/waveform/waveform_widget.py:431
+#: widgets/waveform/waveform_widget.py:446
 msgid "Relative to view"
 msgstr "Relativ zur Ansicht"
 
-#: widgets/waveform/waveform_widget.py:432
+#: widgets/waveform/waveform_widget.py:447
 msgid "Relative to buffer"
 msgstr "Relativ zum Puffer"
 
-#: widgets/waveform/waveform_widget.py:433
+#: widgets/waveform/waveform_widget.py:448
 msgid "Absolute time"
 msgstr "Absolute Zeit"
 
-#: widgets/waveform/waveform_widget.py:439
+#: widgets/waveform/waveform_widget.py:454
 msgid "The time zone for absolute time display."
 msgstr "Die Zeitzone für die Anzeige der absoluten Zeit."
 
-#: widgets/waveform/waveform_widget.py:448
+#: widgets/waveform/waveform_widget.py:463
 msgid "The x-axis time mode."
 msgstr "Der Zeitmodus auf der x-Achse."
 
-#: widgets/waveform/waveform_widget.py:450
+#: widgets/waveform/waveform_widget.py:465
 msgid ""
 "Absolute displays the date and time of day for the configured time zone."
 msgstr "„Absolute“ zeigt Datum und Uhrzeit für die konfigurierte Zeitzone an."
 
-#: widgets/waveform/waveform_widget.py:451
+#: widgets/waveform/waveform_widget.py:466
 msgid ""
 "Relative positive displays the elapsed time from the first available sample."
 msgstr ""
 "„Relativ positiv“ zeigt die verstrichene Zeit seit der ersten verfügbaren "
 "Messung an."
 
-#: widgets/waveform/waveform_widget.py:452
+#: widgets/waveform/waveform_widget.py:467
 msgid ""
 "Relative negative displays 0 at the newest sample with negative elapsed time"
 " to the left."
@@ -4125,30 +4674,30 @@ msgstr ""
 "Bei relativer negativer Anzeige wird bei der neuesten Messung der Wert 0 "
 "angezeigt, wobei die verstrichene Zeit nach links hin negativ ist."
 
-#: widgets/waveform/waveform_widget.py:455
-#: widgets/waveform/waveform_widget.py:553
-#: widgets/waveform/waveform_widget.py:3550
-#: widgets/waveform/waveform_widget.py:3577
+#: widgets/waveform/waveform_widget.py:470
+#: widgets/waveform/waveform_widget.py:568
+#: widgets/waveform/waveform_widget.py:3599
+#: widgets/waveform/waveform_widget.py:3626
 msgid "Absolute"
 msgstr "Absolut"
 
-#: widgets/waveform/waveform_widget.py:456
-#: widgets/waveform/waveform_widget.py:3580
+#: widgets/waveform/waveform_widget.py:471
+#: widgets/waveform/waveform_widget.py:3629
 msgid "Relative positive"
 msgstr "Relativ positiv"
 
-#: widgets/waveform/waveform_widget.py:457
-#: widgets/waveform/waveform_widget.py:3583
+#: widgets/waveform/waveform_widget.py:472
+#: widgets/waveform/waveform_widget.py:3632
 msgid "Relative negative"
 msgstr "Relativ negativ"
 
-#: widgets/waveform/waveform_widget.py:463
+#: widgets/waveform/waveform_widget.py:478
 msgid "Maintain the Δt view duration when streaming starts."
 msgstr ""
 "Behalten Sie die Dauer der Δt-Ansicht bei, wenn der Streaming-Vorgang "
 "beginnt."
 
-#: widgets/waveform/waveform_widget.py:465
+#: widgets/waveform/waveform_widget.py:480
 msgid ""
 "When enabled, starting sample streaming pins the right side only and keeps "
 "the current Δt view duration. The plot starts mostly empty, and the traces "
@@ -4159,7 +4708,7 @@ msgstr ""
 "Diagramm ist zunächst weitgehend leer, und die Kurven wachsen, sobald die "
 "Daten einströmen."
 
-#: widgets/waveform/waveform_widget.py:468
+#: widgets/waveform/waveform_widget.py:483
 msgid ""
 "The view duration never shrinks to the available data, so stopping a short "
 "capture shows empty space beyond the traces."
@@ -4168,7 +4717,7 @@ msgstr ""
 "einem vorzeitigen Abbruch einer kurzen Erfassung hinter den Kurven leere "
 "Bereiche zu sehen sind."
 
-#: widgets/waveform/waveform_widget.py:470
+#: widgets/waveform/waveform_widget.py:485
 msgid ""
 "When disabled, starting sample streaming pins both sides, and the view "
 "expands with the captured data."
@@ -4176,270 +4725,259 @@ msgstr ""
 "Wenn diese Funktion deaktiviert ist, starten die Pins auf beiden Seiten das "
 "Sample-Streaming, und die Ansicht wird mit den erfassten Daten erweitert."
 
-#: widgets/waveform/waveform_widget.py:477
+#: widgets/waveform/waveform_widget.py:492
 msgid "Show the plot statistics on the right."
 msgstr "Zeigen Sie die Plot-Statistiken auf der rechten Seite an."
 
-#: widgets/waveform/waveform_widget.py:482
+#: widgets/waveform/waveform_widget.py:497
 msgid "Show frequency for dual markers and statistics."
 msgstr "Zeigt die Frequenz für duale Marker und Statistiken an."
 
-#: widgets/waveform/waveform_widget.py:487
+#: widgets/waveform/waveform_widget.py:502
 msgid "The quantities to display by default."
 msgstr "Die Größen, die standardmäßig angezeigt werden."
 
-#: widgets/waveform/waveform_widget.py:499
+#: widgets/waveform/waveform_widget.py:514
 msgid "Use OpenGL rendering."
 msgstr "Verwenden Sie OpenGL-Rendering."
 
-#: widgets/waveform/waveform_widget.py:516
+#: widgets/waveform/waveform_widget.py:531
 msgid "Pin the left side (oldest) data so that it stays in view."
 msgstr ""
 "Pinnen Sie die (ältesten) Daten auf der linken Seite an, damit sie im "
 "Blickfeld bleiben."
 
-#: widgets/waveform/waveform_widget.py:521
+#: widgets/waveform/waveform_widget.py:536
 msgid "Pin the right side (newest) data so that it stays in view."
 msgstr ""
 "Pinnen Sie die (neuesten) Daten auf der rechten Seite an, damit sie im "
 "Blickfeld bleiben."
 
-#: widgets/waveform/waveform_widget.py:526
+#: widgets/waveform/waveform_widget.py:541
 msgid "The waveform state."
 msgstr "Der Zustand der Wellenform."
 
-#: widgets/waveform/waveform_widget.py:532
+#: widgets/waveform/waveform_widget.py:547
 msgid "The annotations."
 msgstr "Die Anmerkungen."
 
-#: widgets/waveform/waveform_widget.py:539
+#: widgets/waveform/waveform_widget.py:554
 msgid "Show the summary waveform at top."
 msgstr "Zeigen Sie die zusammengefasste Wellenform oben an."
 
-#: widgets/waveform/waveform_widget.py:544
+#: widgets/waveform/waveform_widget.py:559
 msgid "The signal quantity to show in the summary."
 msgstr "Die Signalgröße, die in der Zusammenfassung angezeigt werden soll."
 
-#: widgets/waveform/waveform_widget.py:550
+#: widgets/waveform/waveform_widget.py:565
 msgid "X-axis annotation mode"
 msgstr "X-Achsen-Anmerkungsmodus"
 
-#: widgets/waveform/waveform_widget.py:554
-#: widgets/waveform/waveform_widget.py:3555
+#: widgets/waveform/waveform_widget.py:569
+#: widgets/waveform/waveform_widget.py:3604
 msgid "Relative"
 msgstr "Relativ"
 
-#: widgets/waveform/waveform_widget.py:560
+#: widgets/waveform/waveform_widget.py:575
 msgid "The available subsources."
 msgstr "Die verfügbaren Teilquellen."
 
-#: widgets/waveform/waveform_widget.py:566
+#: widgets/waveform/waveform_widget.py:581
 msgid "The selected subsources for each trace."
 msgstr "Die ausgewählten Teilquellen für jede Messkurve."
 
-#: widgets/waveform/waveform_widget.py:572
+#: widgets/waveform/waveform_widget.py:587
 msgid "The trace priority: highest int value on top, None is off."
 msgstr ""
 "Die Priorität der Messkurve: Der höchste int-Wert steht oben, None ist aus."
 
-#: widgets/waveform/waveform_widget.py:578
+#: widgets/waveform/waveform_widget.py:593
 msgid "The Δt display unit."
 msgstr "Die Anzeigeeinheit Δt."
 
-#: widgets/waveform/waveform_widget.py:580
+#: widgets/waveform/waveform_widget.py:595
 msgid "Conventional displays days:hours:minutes:seconds."
 msgstr "Herkömmliche Anzeigen zeigen Tage:Stunden:Minuten:Sekunden an."
 
-#: widgets/waveform/waveform_widget.py:581
+#: widgets/waveform/waveform_widget.py:596
 msgid "Auto displays a decimal value with the best fit unit."
 msgstr ""
 "„Auto“ zeigt einen Dezimalwert mit der am besten passenden Einheit an."
 
-#: widgets/waveform/waveform_widget.py:582
+#: widgets/waveform/waveform_widget.py:597
 msgid "Hours, Minutes, and Seconds display a decimal value in that unit."
 msgstr ""
 "Stunden, Minuten und Sekunden zeigen einen Dezimalwert in der jeweiligen "
 "Einheit an."
 
-#: widgets/waveform/waveform_widget.py:586
-#: widgets/waveform/waveform_widget.py:3872
+#: widgets/waveform/waveform_widget.py:601
+#: widgets/waveform/waveform_widget.py:3928
 msgid "Conventional"
 msgstr "Herkömmlich"
 
-#: widgets/waveform/waveform_widget.py:587
-#: widgets/waveform/waveform_widget.py:3711
-#: widgets/waveform/waveform_widget.py:3873
-#: widgets/waveform/waveform_widget.py:4228
-msgid "Auto"
-msgstr "Auto"
-
-#: widgets/waveform/waveform_widget.py:588
-#: widgets/waveform/waveform_widget.py:3874
+#: widgets/waveform/waveform_widget.py:603
+#: widgets/waveform/waveform_widget.py:3930
 msgid "Hours"
 msgstr "Stunden"
 
-#: widgets/waveform/waveform_widget.py:589
-#: widgets/waveform/waveform_widget.py:3875
+#: widgets/waveform/waveform_widget.py:604
+#: widgets/waveform/waveform_widget.py:3931
 msgid "Minutes"
 msgstr "Minuten"
 
-#: widgets/waveform/waveform_widget.py:590
-#: widgets/waveform/waveform_widget.py:3876
+#: widgets/waveform/waveform_widget.py:605
+#: widgets/waveform/waveform_widget.py:3932
 msgid "Seconds"
 msgstr "Sekunden"
 
-#: widgets/waveform/waveform_widget.py:3497
-#: widgets/waveform/waveform_widget.py:3850
+#: widgets/waveform/waveform_widget.py:3546
+#: widgets/waveform/waveform_widget.py:3906
 msgid "Save image to file"
 msgstr "Bild in Datei speichern"
 
-#: widgets/waveform/waveform_widget.py:3544
-#: widgets/waveform/waveform_widget.py:3653
+#: widgets/waveform/waveform_widget.py:3593
+#: widgets/waveform/waveform_widget.py:3705
 msgid "Single marker"
 msgstr "Einzelner Marker"
 
-#: widgets/waveform/waveform_widget.py:3545
-#: widgets/waveform/waveform_widget.py:3654
+#: widgets/waveform/waveform_widget.py:3594
+#: widgets/waveform/waveform_widget.py:3706
 msgid "Dual markers"
 msgstr "Zwei Marker"
 
-#: widgets/waveform/waveform_widget.py:3547
-#: widgets/waveform/waveform_widget.py:3574
+#: widgets/waveform/waveform_widget.py:3596
+#: widgets/waveform/waveform_widget.py:3623
 msgid "Mode"
 msgstr "Modus"
 
-#: widgets/waveform/waveform_widget.py:3560
-#: widgets/waveform/waveform_widget.py:3655
-#: widgets/waveform/waveform_widget.py:3826
-#: widgets/waveform/waveform_widget.py:3844
+#: widgets/waveform/waveform_widget.py:3609
+#: widgets/waveform/waveform_widget.py:3707
+#: widgets/waveform/waveform_widget.py:3878
+#: widgets/waveform/waveform_widget.py:3896
 msgid "Clear all"
 msgstr "Alles löschen"
 
-#: widgets/waveform/waveform_widget.py:3571
-#: widgets/waveform/waveform_widget.py:3704
-#: widgets/waveform/waveform_widget.py:3832
+#: widgets/waveform/waveform_widget.py:3620
+#: widgets/waveform/waveform_widget.py:3756
+#: widgets/waveform/waveform_widget.py:3884
 msgid "Annotations"
 msgstr "Anmerkungen"
 
-#: widgets/waveform/waveform_widget.py:3587
+#: widgets/waveform/waveform_widget.py:3636
 msgid "Time Zone"
 msgstr "Zeitzone"
 
-#: widgets/waveform/waveform_widget.py:3597
-#: widgets/waveform/waveform_widget.py:3881
+#: widgets/waveform/waveform_widget.py:3646
+#: widgets/waveform/waveform_widget.py:3937
 msgid "Δt holdover"
 msgstr "Δt-Holdover"
 
-#: widgets/waveform/waveform_widget.py:3707
+#: widgets/waveform/waveform_widget.py:3759
 msgid "Range"
 msgstr "Range"
 
-#: widgets/waveform/waveform_widget.py:3717
+#: widgets/waveform/waveform_widget.py:3769
 msgid "Exact"
 msgstr "Genau"
 
-#: widgets/waveform/waveform_widget.py:3726
+#: widgets/waveform/waveform_widget.py:3778
 msgid "Scale"
 msgstr "Skala"
 
-#: widgets/waveform/waveform_widget.py:3729
-msgid "Linear"
-msgstr "Linear"
-
-#: widgets/waveform/waveform_widget.py:3734
-msgid "Logarithmic"
-msgstr "Logarithmisch"
-
-#: widgets/waveform/waveform_widget.py:3742
+#: widgets/waveform/waveform_widget.py:3794
 msgid "Logarithmic zero"
 msgstr "Logarithmischer Nullpunkt"
 
-#: widgets/waveform/waveform_widget.py:3824
+#: widgets/waveform/waveform_widget.py:3876
 msgid "Hide all text"
 msgstr "Alle Texte ausblenden"
 
-#: widgets/waveform/waveform_widget.py:3825
+#: widgets/waveform/waveform_widget.py:3877
 msgid "Show all text"
 msgstr "Alle Texte anzeigen"
 
-#: widgets/waveform/waveform_widget.py:3833
+#: widgets/waveform/waveform_widget.py:3885
 msgid "Vertical"
 msgstr "Vertikal"
 
-#: widgets/waveform/waveform_widget.py:3836
+#: widgets/waveform/waveform_widget.py:3888
 msgid "Horizontal"
 msgstr "Horizontal"
 
-#: widgets/waveform/waveform_widget.py:3847
+#: widgets/waveform/waveform_widget.py:3899
 msgid "Y-axis auto range"
 msgstr "Automatischer Bereich der Y-Achse"
 
-#: widgets/waveform/waveform_widget.py:3851
+#: widgets/waveform/waveform_widget.py:3902
+msgid "Anti-aliasing"
+msgstr "Anti-Aliasing"
+
+#: widgets/waveform/waveform_widget.py:3907
 msgid "Copy image to clipboard"
 msgstr "Bild in die Zwischenablage kopieren"
 
-#: widgets/waveform/waveform_widget.py:3852
+#: widgets/waveform/waveform_widget.py:3908
 msgid "Export visible data"
 msgstr "Sichtbare Daten exportieren"
 
-#: widgets/waveform/waveform_widget.py:3853
+#: widgets/waveform/waveform_widget.py:3909
 msgid "Export visible data as CSV"
 msgstr "Exportieren Sie sichtbare Daten als CSV"
 
-#: widgets/waveform/waveform_widget.py:3854
+#: widgets/waveform/waveform_widget.py:3910
 msgid "Export all data"
 msgstr "Alle Daten exportieren"
 
-#: widgets/waveform/waveform_widget.py:3869
+#: widgets/waveform/waveform_widget.py:3925
 msgid "Unit"
 msgstr "Einheit"
 
-#: widgets/waveform/waveform_widget.py:4050
+#: widgets/waveform/waveform_widget.py:4106
 msgid "Export visible data to CSV file"
 msgstr "Exportieren Sie sichtbare Daten in eine CSV-Datei"
 
-#: widgets/waveform/waveform_widget.py:4205
+#: widgets/waveform/waveform_widget.py:4261
 msgid "Analysis"
 msgstr "Analyse"
 
-#: widgets/waveform/waveform_widget.py:4213
+#: widgets/waveform/waveform_widget.py:4269
 msgid "Interval"
 msgstr "Interval"
 
-#: widgets/waveform/waveform_widget.py:4222
+#: widgets/waveform/waveform_widget.py:4278
 msgid "Zoom"
 msgstr "Zoom"
 
-#: widgets/waveform/waveform_widget.py:4226
+#: widgets/waveform/waveform_widget.py:4282
 msgid "Show statistics"
 msgstr "Statistik anzeigen"
 
-#: widgets/waveform/waveform_widget.py:4231
+#: widgets/waveform/waveform_widget.py:4287
 msgid "Left"
 msgstr "Links"
 
-#: widgets/waveform/waveform_widget.py:4234
+#: widgets/waveform/waveform_widget.py:4290
 msgid "Right"
 msgstr "Rechts"
 
-#: widgets/waveform/waveform_widget.py:4237
-#: widgets/waveform/waveform_widget.py:4244
+#: widgets/waveform/waveform_widget.py:4293
+#: widgets/waveform/waveform_widget.py:4300
 msgid "Off"
 msgstr "Aus"
 
-#: widgets/waveform/waveform_widget.py:4241
+#: widgets/waveform/waveform_widget.py:4297
 msgid "Show time"
 msgstr "Zeit anzeigen"
 
-#: widgets/waveform/waveform_widget.py:4247
+#: widgets/waveform/waveform_widget.py:4303
 msgid "On"
 msgstr "Auf"
 
-#: widgets/waveform/waveform_widget.py:4251
+#: widgets/waveform/waveform_widget.py:4307
 msgid "Label"
 msgstr "Etikett"
 
-#: widgets/waveform/waveform_widget.py:4287
+#: widgets/waveform/waveform_widget.py:4343
 msgid "Y mode"
 msgstr "Y-Modus"
 
@@ -4560,3 +5098,11 @@ msgstr "Einheiten"
 #~ "prüfenden Gerät an. Schliessen Sie den Spannungsanschluss an die "
 #~ "Spannungsversorgung an. Weitere Anschlussbeispiele finden Sie im Joulescope "
 #~ "JS220 Benutzerhandbuch."
+
+#~ msgid "Reset to default settings"
+#~ msgstr "Zurücksetzen auf Standardeinstellungen"
+
+#~ msgid "Click this button to reset this device to the default settings"
+#~ msgstr ""
+#~ "Klicken Sie auf diese Schaltfläche, um dieses Gerät auf die "
+#~ "Standardeinstellungen zurückzusetzen"

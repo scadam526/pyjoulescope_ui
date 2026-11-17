@@ -19,7 +19,7 @@ See docs/plans/completed/spectrum.md.
 
 from PySide6 import QtCore, QtGui, QtWidgets
 from joulescope_ui import register, N_, get_topic_name
-from joulescope_ui.styles import styled_widget, color_as_qcolor, font_as_qfont
+from joulescope_ui.styles import styled_widget, color_as_qcolor
 from joulescope_ui.widget_tools import CallableAction, settings_action_create, context_menu_show, \
     CONTROL_LOCATION_SETTING, control_location_apply
 from joulescope_ui.source_selector import SourceSelector
@@ -27,7 +27,7 @@ from joulescope_ui.units import three_sig_figs
 from joulescope_ui.spectrum_engine import WINDOWS, WINDOW_NAMES, WINDOW_PEAK_INTERPOLATE, \
     WINDOW_MAIN_LOBE_BINS, DB_FLOOR, \
     DECIMATE_ROLLOFF, bin_frequencies, column_map, find_peaks, hop_length, sample_count, to_db
-from joulescope_ui.styles.manager import _load_cls_colors, _load_cls_fonts
+from joulescope_ui.widgets import plot_base
 from joulescope_ui.widgets.waveform import axis_ticks
 from .spectrum_control import SpectrumControlWidget
 from .spectrum_plot import FftPlot, WaterfallPlot, WaterfallHistory, COLORMAPS, color_table, \
@@ -352,6 +352,9 @@ class SpectrumWidget(QtWidgets.QWidget):
         self.setObjectName('spectrum_widget')
         self.source_selector = SourceSelector(self, 'signal_stream')
         self.source_selector.sources_changed.connect(self._on_sources_changed)
+        # a selection change, such as from undo or the context menu, keeps the list
+        self.source_selector.source_changed.connect(
+            lambda value: self._on_sources_changed(self.source_selector.sources))
         self.source_selector.resolved_changed.connect(self._on_resolved_changed)
 
         self._layout = QtWidgets.QVBoxLayout(self)
@@ -642,7 +645,7 @@ class SpectrumWidget(QtWidgets.QWidget):
             return
         hi, lo = max(his), min(los)
         lo = max(lo, hi - _DB_RANGE_MAX)
-        self._db_auto = self._hysteresis(self._db_auto, lo, hi, 10.0)
+        self._db_auto = plot_base.autoscale_hysteresis(self._db_auto, lo, hi, 10.0)
         if self.y_units == 'dB':
             self._y_auto = self._db_auto
         else:
@@ -650,21 +653,6 @@ class SpectrumWidget(QtWidgets.QWidget):
             y = self._y_auto
             if y is None or v_hi > y[1] or v_hi < 0.4 * y[1]:
                 self._y_auto = [0.0, v_hi * 1.25]
-
-    @staticmethod
-    def _hysteresis(current, lo, hi, step):
-        target_hi = np.ceil((hi + 0.5 * step) / step) * step
-        target_lo = np.floor((lo - 0.5 * step) / step) * step
-        if current is None:
-            return [target_lo, target_hi]
-        y0, y1 = current
-        if hi > y1 or hi < y1 - 3 * step:
-            y1 = target_hi
-        if lo < y0 or lo > y0 + 4 * step:
-            y0 = target_lo
-        if y1 - y0 < 2 * step:
-            y0 = y1 - 2 * step
-        return [y0, y1]
 
     def _peak_trace(self):
         for name in ['average', 'live', 'max']:
@@ -769,37 +757,20 @@ class SpectrumWidget(QtWidgets.QWidget):
         return self._style_cache
 
     def _style_build(self):
-        style_obj = getattr(self, 'style_obj', None)
-        if style_obj is not None:
-            v = style_obj['vars']
-        else:  # not rendered by the style manager, such as in unit tests
-            v = {**_load_cls_colors(type(self))['dark'], **_load_cls_fonts(type(self))['js1']}
-        font = font_as_qfont(v['spectrum.axis_font'])
-        fm = QtGui.QFontMetrics(font)
+        v = plot_base.style_vars(self)
+        s = plot_base.style_build(v, 'spectrum')
+        fm = s['font_metrics']
 
         def pen(name):
             return QtGui.QPen(color_as_qcolor(v[name]))
 
-        s = {
-            'background': color_as_qcolor(v['spectrum.background']),
-            'background_brush': QtGui.QBrush(color_as_qcolor(v['spectrum.background'])),
-            'text_pen': pen('spectrum.text_foreground'),
-            'text_bg_brush': QtGui.QBrush(color_as_qcolor(v['spectrum.text_background'])),
-            'grid_major_pen': pen('spectrum.grid_major'),
-            'grid_minor_pen': pen('spectrum.grid_minor'),
-            'border_pen': pen('spectrum.plot_border'),
-            'hover_pen': pen('spectrum.hover'),
+        s.update({
             'marker_pen': pen('spectrum.marker'),
             'peak_pen': pen('spectrum.peak'),
             'peak_brush': QtGui.QBrush(color_as_qcolor(v['spectrum.peak'])),
-            'warning_pen': pen('spectrum.status_warning'),
-            'font': font,
-            'font_metrics': fm,
-            'font_height': fm.height(),
-            'font_ascent': fm.ascent(),
             'y_label_width': fm.horizontalAdvance('-888.88'),
             'right_width': 6 + 12 + 3 + fm.horizontalAdvance('-888') + 4,
-        }
+        })
         for name in _TRACES:
             p = pen(f'spectrum.trace_{name}')
             p.setWidth(int(self.trace_width))

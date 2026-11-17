@@ -52,6 +52,71 @@ This file contains the list of changes made to pyjoulescope_ui.
   the restored plot settings to the wrong plot position.
 
 
+## 1.8.1
+
+2026 Nov 16
+
+* Added the Efficiency widget, which measures power converter efficiency
+  with two Joulescopes: one on the converter input and one on the output.
+  It shows the efficiency at the statistics rate, efficiency vs time, and
+  an efficiency vs output current curve built from steady load windows,
+  and it exports both to CSV.  The widget integrates both instruments over
+  the same time interval, so the free-running instrument clocks do not
+  affect the result.  See "Theory: Efficiency" on docs.joulescope.com for
+  the wiring that keeps the burden voltage out of the measurement.
+* Added Tools → Event Analyzer (alpha).  Select a JLS capture and the
+  analyzer finds the wake-up events above the sleep current, groups
+  repeated events into types by waveform shape, and accounts for all of
+  the charge.  It writes an HTML report, which opens in your web browser,
+  plus CSV and summary JSON files, by default next to the capture.  The
+  report works offline and can be shared as a single file.  This preview
+  uses the new joulescope_event_analyzer package; please share feedback.
+* Fixed the empty Colors, Fonts and Defines tabs in the Settings widget for
+  widget defaults (Widgets → Waveform, for example) and View defaults
+  (forum 1153).  The default colors now apply right away to every existing
+  and new widget of that type, except for colors changed on the widget
+  itself, and they persist across restarts.  New widgets no longer copy the
+  default colors into their own settings.
+* Added Reset to the Settings widget.  Right-click an item in the tree
+  for "Reset to defaults…", which resets a device, widget or view to its
+  defaults, or "Reset to factory defaults…" for the defaults themselves.
+  The Reset button at the end of the tabs, or a tab right-click, resets one
+  tab.  Names that differ from their defaults show in bold, and a
+  right-click on a name resets that one setting, color, font or define.
+  Ctrl+Z undoes a reset.  The TCP server gained a context_menu action to
+  test these menus.
+* Changed the Device control "Reset to defaults" button to use the device
+  defaults from the Settings widget, rather than the factory defaults, and
+  to keep the device name.
+* Fixed the Device control current range limits slider rewriting the
+  limits in reverse order.
+* Added optional Waveform anti-aliasing (#356).  When zoomed out, a short
+  pulse no longer flickers in the average trace as the plot scrolls.  The
+  mean-preserving filter applies to the displayed average only.  Enable
+  it from the plot right-click menu or the Waveform settings.
+* Fixed the Spectrum source selector showing the previous source after
+  selecting a source from the right-click menu or with undo.
+* Silenced the harmless "qt.qpa.wayland.textinput" warnings that Qt prints
+  on Linux Wayland each time a UI window becomes active.
+* Fixed a device staying unusable after one failed open, such as right
+  after it re-enumerates.  The UI now retries the open twice and uses the
+  driver's default open timeout for every model, where the JS320 used 1 s.
+* Bumped pyjoulescope_driver from 2.5.6 to 2.5.7, which bundles JS320
+  firmware 1.1.14 and fixes:
+  * JS320 signal data that did not return after a USB data-only disconnect
+    while streaming, such as a cable glitch or a hub port reset that keeps
+    VBUS on.  Statistics kept updating, so the device looked like it was
+    still measuring.
+  * The waveform freezing, while statistics continued, after a device's
+    sample counter restarted without a disconnect.
+  * A JS320 that stopped answering without a disconnect, which stayed open
+    with no data.  The driver now reopens it.
+  * Windows streaming that could stop for good when a USB read failed at
+    once, such as after a resume from sleep.
+  * JS220 open failing with "OP_CONNECT timed out" when the instrument
+    answered sooner than expected.  Thanks to Maxime Vincent (PR #24).
+
+
 ## 1.8.0
 
 2026 Nov 9

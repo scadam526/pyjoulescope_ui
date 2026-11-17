@@ -22,14 +22,24 @@ from joulescope_ui.pubsub_proxy import PubSubProxy
 from joulescope_ui.ui_util import comboBoxConfig, clear_layout
 from joulescope_ui.styles import styled_widget, font_as_qfont, font_as_qss
 from joulescope_ui.styles.color_picker import ColorItem
-from joulescope_ui.styles.manager import style_settings
+from joulescope_ui.styles.manager import style_settings, style_cls_ensure
 from joulescope_ui.widget_tools import CallableSlotAdapter
+from joulescope_ui import settings_reset
 import copy
 import logging
 
 
 _NAME = N_('Settings')
 _STYLE_AVOID = ['ui']  # list of unique_id values to not display style info
+
+
+def _styled_class(obj):
+    """The styled class for a class or instance, or None if not styled."""
+    if not isinstance(obj, type):
+        return obj.__class__ if hasattr(obj, 'style_obj') else None
+    if 'style_obj' not in getattr(obj, 'SETTINGS', {}):
+        return None
+    return obj
 
 
 class _GridWidget(QtWidgets.QWidget):
@@ -49,15 +59,60 @@ class _GridWidget(QtWidgets.QWidget):
         self._spacer = QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self._layout.addItem(self._spacer)
 
+    _TAB = None  # The settings_reset tab name
+
     def clear(self):
         clear_layout(self._grid)
+        self._labels = {}
 
     def __len__(self):
-        rows = self._grid.rowCount()
-        if rows >= 1:
-            return rows - 1
-        else:
-            return 0
+        """The number of rows."""
+        return len(getattr(self, '_labels', {}))
+
+    def _scheme(self):
+        """The active color or font scheme for this tab, if any."""
+        return None
+
+    def _name_label(self, name):
+        """Create the row name label, which shows and resets modified rows.
+
+        See docs/plans/completed/settings_reset.md.
+        """
+        label = QtWidgets.QLabel(name, self)
+        label.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.CustomContextMenu)
+        label.customContextMenuRequested.connect(lambda pos: self._on_name_menu(name, label, pos))
+        if not hasattr(self, '_labels'):
+            self._labels = {}
+        self._labels[name] = label
+        return label
+
+    def _modified_update(self, *args):
+        if self._obj is None or not len(self):
+            return
+        names = settings_reset.modified(self.pubsub, get_unique_id(self._obj), self._TAB, self._scheme())
+        for name, label in self._labels.items():
+            label.setStyleSheet('font-weight: bold;' if name in names else '')
+
+    def _on_name_menu(self, name, label, pos):
+        unique_id = get_unique_id(self._obj)
+        names = settings_reset.modified(self.pubsub, unique_id, self._TAB, self._scheme())
+        menu = QtWidgets.QMenu(self)
+        action = menu.addAction(_reset_text(self.pubsub, unique_id, one=True),
+                                lambda: self._reset_name(name))
+        action.setEnabled(name in names)
+        menu.popup(label.mapToGlobal(pos))
+
+    def _reset_name(self, name):
+        value = {'target': get_unique_id(self._obj), 'tabs': [self._TAB], 'names': [name]}
+        scheme = self._scheme()
+        if scheme is not None:
+            value['schemes'] = {self._TAB: scheme}
+        self.pubsub.publish(settings_reset.RESET_TOPIC, value)
+        self._refresh()
+
+    def _refresh(self):
+        """Show the published values after a reset."""
+        self._modified_update()
 
 
 class SettingsEditorWidget(_GridWidget):
@@ -68,6 +123,8 @@ class SettingsEditorWidget(_GridWidget):
         self._row = 1
         super().__init__(parent=parent)
         self.setObjectName('settings_editor_widget')
+
+    _TAB = 'settings'
 
     @property
     def object(self):
@@ -95,6 +152,8 @@ class SettingsEditorWidget(_GridWidget):
             if setting in styles:
                 continue
             self._insert(topic, setting)
+        self.pubsub.subscribe(topic, self._modified_update, ['pub'])
+        self._modified_update()
 
     def _insert(self, topic, setting):
         settings_topic = f'{topic}/{setting}'
@@ -106,7 +165,7 @@ class SettingsEditorWidget(_GridWidget):
         else:
             tooltip = tooltip_format(meta.brief, meta.detail)
 
-        label = QtWidgets.QLabel(setting, self)
+        label = self._name_label(setting)
         if tooltip is not None:
             label.setToolTip(tooltip)
         self._grid.addWidget(label, self._row, 0, 1, 1)
@@ -193,6 +252,14 @@ class SettingsEditorWidget(_GridWidget):
 
 class ColorEditorWidget(_GridWidget):
 
+    _TAB = 'colors'
+
+    def _scheme(self):
+        return self._color_scheme
+
+    def _refresh(self):
+        self.object = self._obj  # rebuild with the published values
+
     def __init__(self, parent=None):
         self.pubsub = None
         self._colors = None
@@ -222,6 +289,7 @@ class ColorEditorWidget(_GridWidget):
                 colors[self._color_scheme] = {}
             colors[self._color_scheme][name] = color
         self.pubsub.publish(f'{self._topic}/settings/colors', colors)
+        self._modified_update()
 
     def clear(self):
         for w in self._color_widgets:
@@ -244,18 +312,18 @@ class ColorEditorWidget(_GridWidget):
             return
         if obj.unique_id in _STYLE_AVOID:
             return
-        if not hasattr(obj, 'style_obj') or obj.style_obj is None:
+        cls = _styled_class(obj)
+        if cls is None:
             return
         active_view = self.pubsub.query('registry/view/settings/active', default='view')
         active_view_topic = get_topic_name(active_view)
         self._color_scheme = self.pubsub.query(f'{active_view_topic}/settings/color_scheme', default='dark')
         self._obj = obj
         self._topic = get_topic_name(obj)
-        cls = obj.__class__
-        colors = copy.deepcopy(cls._style_cls['load']['colors'][self._color_scheme])
-        cls_colors = self.pubsub.query(f'{get_topic_name(obj.__class__)}/settings/colors', default=None)
+        colors = copy.deepcopy(style_cls_ensure(cls)['load']['colors'][self._color_scheme])
+        cls_colors = self.pubsub.query(f'{get_topic_name(cls)}/settings/colors', default=None)
         if cls_colors is not None:
-            for color_name, color_value in cls_colors[self._color_scheme].items():
+            for color_name, color_value in cls_colors.get(self._color_scheme, {}).items():
                 colors[color_name] = color_value
         if not isinstance(obj, type):
             if obj.colors is not None and obj.colors.get(self._color_scheme) is not None:
@@ -268,13 +336,14 @@ class ColorEditorWidget(_GridWidget):
         color_label = QtWidgets.QLabel(N_('Color'), self)
         self._grid.addWidget(color_label, 0, 1, 1, 2)
         for row, (name, value) in enumerate(self._colors.items()):
-            name_label = QtWidgets.QLabel(name, self)
+            name_label = self._name_label(name)
             self._grid.addWidget(name_label, row + 1, 0, 1, 1)
             w = ColorItem(self, name, value)
             self._grid.addWidget(w.value_edit, row + 1, 1, 1, 1)
             self._grid.addWidget(w.color_label, row + 1, 2, 1, 1)
             self._color_widgets.append(w)
             w.color_changed.connect(self._on_change)
+        self._modified_update()
 
 
 class QFontLabel(QtWidgets.QLabel):
@@ -314,6 +383,14 @@ class QFontLabel(QtWidgets.QLabel):
 
 class FontEditorWidget(_GridWidget):
 
+    _TAB = 'fonts'
+
+    def _scheme(self):
+        return self._font_scheme
+
+    def _refresh(self):
+        self.object = self._obj  # rebuild with the published values
+
     def __init__(self, parent=None):
         self.pubsub = None
         self._font_scheme = None
@@ -341,23 +418,23 @@ class FontEditorWidget(_GridWidget):
             return
         if obj.unique_id in _STYLE_AVOID:
             return
-        if not hasattr(obj, 'style_obj') or obj.style_obj is None:
+        cls = _styled_class(obj)
+        if cls is None:
             return
         active_view = self.pubsub.query('registry/view/settings/active', default='view')
         active_view_topic = get_topic_name(active_view)
         self._font_scheme = self.pubsub.query(f'{active_view_topic}/settings/font_scheme', default='js1')
         self._obj = obj
         self._topic = get_topic_name(obj)
-        cls = obj.__class__
 
-        fonts = copy.deepcopy(cls._style_cls['load']['fonts'][self._font_scheme])
-        cls_fonts = self.pubsub.query(f'{get_topic_name(obj.__class__)}/settings/fonts', default=None)
+        fonts = copy.deepcopy(style_cls_ensure(cls)['load']['fonts'][self._font_scheme])
+        cls_fonts = self.pubsub.query(f'{get_topic_name(cls)}/settings/fonts', default=None)
         if cls_fonts is not None:
-            for font_name, font_value in cls_fonts[self._font_scheme].items():
+            for font_name, font_value in cls_fonts.get(self._font_scheme, {}).items():
                 fonts[font_name] = font_value
         if not isinstance(obj, type):
             if obj.fonts is not None:
-                for key, value in obj.fonts[self._font_scheme].items():
+                for key, value in obj.fonts.get(self._font_scheme, {}).items():
                     fonts[key] = value
         self._fonts = fonts
 
@@ -367,11 +444,12 @@ class FontEditorWidget(_GridWidget):
         self._grid.addWidget(font_label, 0, 1, 1, 1)
 
         for row, (name, value) in enumerate(fonts.items()):
-            name_label = QtWidgets.QLabel(name, self)
+            name_label = self._name_label(name)
             self._grid.addWidget(name_label, row + 1, 0, 1, 1)
             w = QFontLabel(self, name, value)
             w.changed.connect(self._on_change)
             self._grid.addWidget(w, row + 1, 1, 1, 1)
+        self._modified_update()
 
     @QtCore.Slot(str, str)
     def _on_change(self, name, value):
@@ -386,9 +464,15 @@ class FontEditorWidget(_GridWidget):
                 fonts[self._font_scheme] = {}
             fonts[self._font_scheme][name] = value
         self.pubsub.publish(f'{self._topic}/settings/fonts', fonts)
+        self._modified_update()
 
 
 class StyleDefineEditorWidget(_GridWidget):
+
+    _TAB = 'style_defines'
+
+    def _refresh(self):
+        self.object = self._obj  # rebuild with the published values
 
     def __init__(self, parent=None):
         self.pubsub = None
@@ -412,14 +496,14 @@ class StyleDefineEditorWidget(_GridWidget):
         if obj is None:
             self._obj = None
             return
-        if not hasattr(obj, 'style_obj') or obj.style_obj is None:
+        cls = _styled_class(obj)
+        if cls is None:
             return
 
         self._obj = obj
         self._topic = get_topic_name(obj)
-        cls = obj.__class__
-        entries = copy.deepcopy(cls._style_cls['load']['style_defines'])
-        cls_entries = self.pubsub.query(f'{get_topic_name(obj.__class__)}/settings/style_defines', default=None)
+        entries = copy.deepcopy(style_cls_ensure(cls)['load']['style_defines'])
+        cls_entries = self.pubsub.query(f'{get_topic_name(cls)}/settings/style_defines', default=None)
         if cls_entries is not None:
             for e_name, e_value in cls_entries.items():
                 entries[e_name] = e_value
@@ -434,12 +518,13 @@ class StyleDefineEditorWidget(_GridWidget):
         self._grid.addWidget(font_label, 0, 1, 1, 1)
 
         for row, (name, value) in enumerate(self._entries.items()):
-            name_label = QtWidgets.QLabel(name, self)
+            name_label = self._name_label(name)
             self._grid.addWidget(name_label, row + 1, 0, 1, 1)
             w = QtWidgets.QLineEdit(self)
             w.setText(value)
             self._connect(name, w)
             self._grid.addWidget(w, row + 1, 1, 1, 1)
+        self._modified_update()
 
     def _connect(self, name, w):
         adapter = CallableSlotAdapter(w, lambda value: self._on_change(name, value))
@@ -447,7 +532,11 @@ class StyleDefineEditorWidget(_GridWidget):
 
     def _on_change(self, name, value):
         self._entries[name] = value
-        self.pubsub.publish(f'{self._topic}/settings/style_defines', dict(self._entries))
+        topic = f'{self._topic}/settings/style_defines'
+        entries = dict(self.pubsub.query(topic, default=None) or {})  # overrides only
+        entries[name] = value
+        self.pubsub.publish(topic, entries)
+        self._modified_update()
 
 
 def _class_items(capability):
@@ -458,6 +547,26 @@ def _class_items(capability):
         children = [[None, x, None] for x in instances if get_instance(x, default=None) is not None]
         entries.append([None, clz, children])
     return entries
+
+
+def _is_resettable(unique_id):
+    """True for a tree entry that has settings: not a group row."""
+    if unique_id is None:
+        return False
+    unique_id = get_unique_id(unique_id)
+    return not unique_id.startswith('__') and get_instance(unique_id, default=None) is not None
+
+
+def _reset_text(pubsub, unique_id, tab=None, one=False):
+    """The reset action text, see docs/plans/completed/settings_reset.md."""
+    factory = settings_reset.base_topic(pubsub, unique_id) is None
+    if one:
+        return N_('Reset to factory default') if factory else N_('Reset to default')
+    if tab is None:
+        return N_('Reset to factory defaults') if factory else N_('Reset to defaults')
+    if factory:
+        return N_('Reset {tab} to factory defaults').format(tab=tab)
+    return N_('Reset {tab} to defaults').format(tab=tab)
 
 
 class SelectorWidget(QtWidgets.QTreeView):
@@ -478,6 +587,17 @@ class SelectorWidget(QtWidgets.QTreeView):
         self.setModel(self._model)
         self.setHeaderHidden(True)
         self.selectionModel().currentChanged.connect(self._on_changed)
+
+    def contextMenuEvent(self, event):
+        index = self.indexAt(event.pos())
+        unique_id = self._model.data(index, QtCore.Qt.UserRole + 1) if index.isValid() else None
+        if not _is_resettable(unique_id):
+            return super().contextMenuEvent(event)
+        menu = QtWidgets.QMenu(self)
+        menu.addAction(_reset_text(self.pubsub, unique_id) + '…',
+                       lambda: self.parent().reset_request(unique_id))
+        menu.popup(event.globalPos())
+        event.accept()
 
     @QtCore.Slot(object, object)
     def _on_changed(self, model_index, model_index_old):
@@ -570,13 +690,14 @@ class SettingsWidget(QtWidgets.QSplitter):
         self._tabs.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         self.addWidget(self._tabs)
 
-        widgets = [
-            [SettingsEditorWidget(self), N_('Settings')],
-            [ColorEditorWidget(self), N_('Colors')],
-            [FontEditorWidget(self), N_('Fonts')],
-            [StyleDefineEditorWidget(self), N_('Defines')],
+        widgets = [  # widget, title, settings_reset tab
+            [SettingsEditorWidget(self), N_('Settings'), 'settings'],
+            [ColorEditorWidget(self), N_('Colors'), 'colors'],
+            [FontEditorWidget(self), N_('Fonts'), 'fonts'],
+            [StyleDefineEditorWidget(self), N_('Defines'), 'style_defines'],
         ]
-        for widget, title in widgets:
+        self._tab_info = []
+        for widget, title, tab in widgets:
             widget.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
             scroll = QtWidgets.QScrollArea(self._tabs)
             scroll.setObjectName(widget.objectName() + '_scroll')
@@ -584,6 +705,20 @@ class SettingsWidget(QtWidgets.QSplitter):
             scroll.setWidget(widget)
             self._tabs.addTab(scroll, title)
             self._widgets.append([widget, scroll])
+            self._tab_info.append([title, tab])
+
+        # Reset: tab bar corner button and tab right-click menu
+        self._reset_menu = QtWidgets.QMenu(self)
+        self._reset_menu.aboutToShow.connect(self._reset_menu_populate)
+        self._reset_button = QtWidgets.QToolButton(self._tabs)
+        self._reset_button.setObjectName('reset_button')
+        self._reset_button.setText(N_('Reset'))
+        self._reset_button.setPopupMode(QtWidgets.QToolButton.ToolButtonPopupMode.InstantPopup)
+        self._reset_button.setMenu(self._reset_menu)
+        self._tabs.setCornerWidget(self._reset_button, QtCore.Qt.Corner.TopRightCorner)
+        tab_bar = self._tabs.tabBar()
+        tab_bar.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.CustomContextMenu)
+        tab_bar.customContextMenuRequested.connect(self._on_tab_context_menu)
 
     def closeEvent(self, event):
         self.object = None
@@ -614,6 +749,62 @@ class SettingsWidget(QtWidgets.QSplitter):
             widget.pubsub = self._object_pubsub
             widget.object = obj
         self._obj = obj
+        self._reset_button.setEnabled(_is_resettable(obj))
+
+    def _reset_tab_action(self, menu, index):
+        title, tab = self._tab_info[index]
+        unique_id = get_unique_id(self._obj)
+        action = menu.addAction(_reset_text(self.pubsub, unique_id, title),
+                                lambda: self.reset_request(unique_id, tab))
+        action.setEnabled(len(self._widgets[index][0]) > 0)  # no rows: nothing to reset
+
+    def _reset_menu_populate(self):
+        self._reset_menu.clear()
+        if not _is_resettable(self._obj):
+            return
+        unique_id = get_unique_id(self._obj)
+        self._reset_tab_action(self._reset_menu, self._tabs.currentIndex())
+        self._reset_menu.addAction(_reset_text(self.pubsub, unique_id) + '…',
+                                   lambda: self.reset_request(unique_id))
+
+    def _on_tab_context_menu(self, pos):
+        index = self._tabs.tabBar().tabAt(pos)
+        if index < 0 or not _is_resettable(self._obj):
+            return
+        menu = QtWidgets.QMenu(self)
+        self._reset_tab_action(menu, index)
+        menu.popup(self._tabs.tabBar().mapToGlobal(pos))
+
+    def reset_request(self, unique_id, tab=None):
+        """Reset settings, see :func:`joulescope_ui.settings_reset.reset`.
+
+        :param unique_id: The instance or class to reset.
+        :param tab: The settings_reset tab name, or None to confirm and
+            then reset all tabs.
+        """
+        unique_id = get_unique_id(unique_id)
+        value = {'target': unique_id}
+        if tab is None:
+            name = self.pubsub.query(f'{get_topic_name(unique_id)}/settings/name', default=unique_id)
+            box = QtWidgets.QMessageBox(self)
+            box.setWindowTitle(_reset_text(self.pubsub, unique_id))
+            box.setText(N_('Reset all settings for {name}?').format(name=name))
+            box.setInformativeText(N_('Undo restores them.'))
+            box.setStandardButtons(QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No)
+            box.setDefaultButton(QtWidgets.QMessageBox.StandardButton.No)
+            if box.exec() != QtWidgets.QMessageBox.StandardButton.Yes:
+                return
+        else:
+            value['tabs'] = [tab]
+            view_topic = get_topic_name(self.pubsub.query('registry/view/settings/active'))
+            value['schemes'] = {
+                'colors': self.pubsub.query(f'{view_topic}/settings/color_scheme', default='dark'),
+                'fonts': self.pubsub.query(f'{view_topic}/settings/font_scheme', default='js1'),
+            }
+        self._log.info('reset %s', value)
+        self.pubsub.publish(settings_reset.RESET_TOPIC, value)
+        if self._obj is not None and get_unique_id(self._obj) == unique_id:
+            self.object = self._obj  # refresh the style editors
 
     def _on_populate(self):
         self._left.populate()
@@ -623,6 +814,15 @@ class SettingsWidget(QtWidgets.QSplitter):
         self.pubsub.subscribe('registry/view/settings/active', self._on_populate, ['pub', 'retain'])
         for c in [REGISTRY_MANAGER_TOPICS.REGISTRY_ADD, REGISTRY_MANAGER_TOPICS.REGISTRY_REMOVE]:
             self.pubsub.subscribe(c, self._on_populate, ['pub'])
+
+    @staticmethod
+    def on_cls_action_reset(pubsub, topic, value):
+        """Reset settings to their defaults as one undo step.
+
+        :param value: The map with keys target, and optionally tabs and
+            schemes.  See :func:`joulescope_ui.settings_reset.reset_values`.
+        """
+        return settings_reset.reset(pubsub, value)
 
     @staticmethod
     def on_cls_action_edit(pubsub, topic, value):

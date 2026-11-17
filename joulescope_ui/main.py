@@ -54,6 +54,7 @@ from .app import App
 from .paths import Paths
 from .view import View  # registers the view manager
 import joulescope_ui.range_tools   # register range_tools
+import joulescope_ui.event_analyzer   # register the Event Analyzer dialog
 import appnope
 import datetime
 import json
@@ -427,6 +428,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         tools = [
             ['accum_clear', N_('Clear Accumulators'), ['registry/ui/actions/!accum_clear', None]],
+            ['event_analyzer', N_('Event Analyzer (alpha)'), ['registry/event_analyzer/actions/!show', None]],
         ]
         if sys.platform.startswith('win'):
             w32time_tool = ['w32time', N_('Configure high accuracy time'), ['registry/ui/actions/!w32time', None]]
@@ -1213,6 +1215,10 @@ def run(log_level=None, file_log_level=None, filename=None, safe_mode=False, tcp
     :return: 0 on success or error code on failure.
     """
     global _software_update, _config_save, _config_clear, _config_import
+    # Qt Wayland text-input-v3 warns twice on every window activation when the
+    # compositor has not yet sent text-input enter.  Harmless, so hide it.
+    # QT_LOGGING_RULES overrides this rule to restore it for debugging.
+    QtCore.QLoggingCategory.setFilterRules('qt.qpa.wayland.textinput.warning=false')
     app = None
     ui = None
     rc = 1
