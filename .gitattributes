@@ -1,0 +1,4 @@
+# Keep vendored files byte-for-byte as committed on every OS.
+# joulescope_event_analyzer checks plotly.min.js against a pinned SHA-256,
+# which core.autocrlf=true on Windows breaks by converting it to CRLF.
+joulescope_ui/resources/plotly/plotly.min.js -text
